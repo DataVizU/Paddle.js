@@ -78,4 +78,4 @@ npm run lint
 ### 提交相关
 
 1. 提交前会自动进行全部文件的 ESLint 格式化
-2. commit 格式需要遵守 <type>(<scope>): <subject>，会自动进行检查
+2. commit 格式需要遵守 `<type>(<scope>): <subject>`，会自动进行检查
