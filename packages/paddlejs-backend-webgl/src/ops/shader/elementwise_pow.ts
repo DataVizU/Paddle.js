@@ -25,18 +25,12 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'Scale_y',
-        'Scale_x',
-        'Scale_out',
-        'counterPos'
-    ],
     textureFuncConf: {
         counter: ['getValueFromTensorPos'],
         origin: ['getValueFromTensorPos']
     },
     behaviors: [
-        'processAxis',
+        'processElementwiseAxis',
         'genElementwiseCounterPos'
     ]
 };

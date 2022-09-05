@@ -23,8 +23,12 @@ cd Paddle.js/packages/paddlejs-examples/humanStream && npm install
 # 执行命令
 npm run dev
 
-# 访问 http://0.0.0.0:8866/ ，即可体验人像分割处理图片应用
+# 访问  http://localhost:8866/ ，即可体验人像分割处理图片应用
 ```
+
+如果启动浏览器后，一直停留在 loading 状态，请查看是否允许  http://localhost:8866/ 访问摄像头，chrome 配置入口如下：
+![image](https://user-images.githubusercontent.com/10822846/148914253-abf82a36-5fce-4fc2-9091-ad6ec55abcc6.png)
+
 
 ### 2.3 效果展示
 
@@ -49,3 +53,9 @@ npm 库 [@paddlejs-models/humanseg](https://github.com/PaddlePaddle/Paddle.js/tr
 
 ## 3.5 loading什么时候消失？
 模型第一次加载会有预热，导致第一次加载时间比较长，加载完成会自动去除loading，如长时间loading未消失，可在控制台查看是否环境有问题，导致无法调起摄像头。
+
+## 4. 在线体验
+
+弹幕效果：https://paddlejs.baidu.com
+
+视频流效果：https://paddlejs.baidu.com/humanStream

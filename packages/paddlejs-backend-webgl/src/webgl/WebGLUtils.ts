@@ -3,8 +3,11 @@
  * @author yueshuangyan
  */
 
+import { Tensor } from '../types';
 import { env } from '@paddlejs/paddlejs-core';
-import { WebGLContextAttributes } from './webgl_types';
+import { WebGLContextAttributes, UniformType } from './webgl_types';
+import { getSmallestDivisor } from '../utils/dataProcess';
+
 
 // 枚举类
 export enum EShaderType
@@ -72,7 +75,8 @@ export class GLHelper {
         preserveDrawingBuffer: false,
         depth: false,
         stencil: false,
-        failIfMajorPerformanceCaveat: true
+        failIfMajorPerformanceCaveat: true,
+        powerPreference: 'high-performance'
     };
 
     public static gl: WebGLRenderingContext = null;
@@ -83,7 +87,7 @@ export class GLHelper {
     }
 
     public static createCanvas() {
-        return document.createElement('canvas');
+        return env.get('canvas') || (document && document.createElement('canvas'));
     }
 
     public static setWebglVersion(version: number) {
@@ -91,10 +95,6 @@ export class GLHelper {
     }
 
     public static setWebGLRenderingContext(gl: WebGLRenderingContext): WebGLRenderingContext {
-        if (this.gl) {
-            return this.gl;
-        }
-
         this.gl = gl;
         return gl;
     }
@@ -103,10 +103,21 @@ export class GLHelper {
         if (this.gl) {
             return this.gl;
         }
+        return this.createWebGLRenderingContext();
+    }
+
+    public static createWebGLRenderingContext(): WebGLRenderingContext {
+        if (this.gl) {
+            return this.gl;
+        }
 
         const canvas = this.createCanvas();
 
-        canvas.addEventListener('webglcontextlost', (ev: Event) => {
+        if (!canvas) {
+            return null;
+        }
+
+        canvas.addEventListener && canvas.addEventListener('webglcontextlost', (ev: Event) => {
             ev.preventDefault();
             throw Error('webgl context is lost~');
         }, false);
@@ -327,4 +338,102 @@ export class GLHelper {
         gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
         return pixels;
     }
+
+    public static setUniformParam(
+        gl: WebGLRenderingContext | WebGL2RenderingContext,
+        loc: WebGLUniformLocation,
+        type: UniformType,
+        value: number | Array<number> | Int32Array | Float32Array
+    ) {
+        switch (type) {
+            case UniformType.uniform1f:
+                gl.uniform1f(loc, value as number);
+                break;
+            case UniformType.uniform1fv:
+                gl.uniform1fv(loc, value as Array<number>);
+                break;
+            case UniformType.uniform1i:
+                gl.uniform1i(loc, value as number);
+                break;
+            case UniformType.uniform1iv:
+                gl.uniform1iv(loc, value as Array<number>);
+                break;
+            case UniformType.uniform2f:
+                gl.uniform2f(loc, value[0], value[1]);
+                break;
+            case UniformType.uniform2fv:
+                gl.uniform2fv(loc, value as Array<number>);
+                break;
+            case UniformType.uniform2i:
+                gl.uniform2i(loc, value[0], value[1]);
+                break;
+            case UniformType.uniform2iv:
+                gl.uniform2iv(loc, value as Array<number>);
+                break;
+            case UniformType.uniform3f:
+                gl.uniform3f(loc, value[0], value[1], value[2]);
+                break;
+            case UniformType.uniform3fv:
+                gl.uniform3fv(loc, value as Array<number>);
+                break;
+            case UniformType.uniform3i:
+                gl.uniform3i(loc, value[0], value[1], value[2]);
+                break;
+            case UniformType.uniform3iv:
+                gl.uniform3iv(loc, value as Array<number>);
+                break;
+            case UniformType.uniform4f:
+                gl.uniform4f(loc, value[0], value[1], value[2], value[3]);
+                break;
+            case UniformType.uniform4fv:
+                gl.uniform4fv(loc, value as Array<number>);
+                break;
+            case UniformType.uniform4i:
+                gl.uniform4i(loc, value[0], value[1], value[2], value[3]);
+                break;
+            case UniformType.uniform4iv:
+                gl.uniform4iv(loc, value as Array<number>);
+                break;
+            default:
+                console.error(`[${type}]: unknown uniform type`);
+                break;
+        }
+    }
+
+    public static genTextureInfoFromTensorShape(
+        MAX_TEXTURE_SIZE: number,
+        tensor: Tensor): void {
+        const GL_TEXTURE_MAX_SIZE = MAX_TEXTURE_SIZE || 4096;
+        const {
+            shape = []
+        } = tensor;
+
+        const [n, c, h, w] = shape;
+        if (n * h <= GL_TEXTURE_MAX_SIZE && c * w <=  GL_TEXTURE_MAX_SIZE) {
+            tensor.shape_texture = [n * h, c * w];
+            return;
+        }
+        const [smallest, sec, third, biggest] = [...shape].sort((prev, cur) => prev - cur);
+        let texW = smallest * biggest;
+        let texH = sec * third;
+
+        if (texW > GL_TEXTURE_MAX_SIZE || texH > GL_TEXTURE_MAX_SIZE) {
+            const [smaller, bigger] = [texW, texH].sort((prev, cur) => prev - cur);
+            const baseCut = Math.ceil(bigger / GL_TEXTURE_MAX_SIZE);
+            const cut = getSmallestDivisor(bigger, baseCut);
+            texW = smaller * cut;
+            texH = Math.ceil(bigger / cut);
+            env.get('debug') && console.error('大小超限', shape, [texH, texW]);
+            if (texW > GL_TEXTURE_MAX_SIZE || texH > GL_TEXTURE_MAX_SIZE) {
+                const requested = `[${texW}x${texH}]`;
+                const max = `[${GL_TEXTURE_MAX_SIZE}x${GL_TEXTURE_MAX_SIZE}]`;
+                throw new Error(
+                    'Requested texture size ' + requested
+                    + ' greater than WebGL maximum on this browser / GPU ' + max + '.');
+            }
+        }
+
+        tensor.shape_texture = [texH, texW];
+    }
+
 }

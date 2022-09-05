@@ -5,12 +5,15 @@
 function mainFunc({
     origin,
     filter,
-    out
+    out,
+    bias
 }, {
     groups = 1,
     strides = [],
     paddings = [],
-    dilations = []
+    dilations = [],
+    fuse_relu,
+    act_type
 }) {
     const [stride_v = 1, stride_h = 1] = strides;
     let [padLeft = 0, padTop = 0] = paddings;
@@ -52,7 +55,7 @@ function mainFunc({
                 // channel计算
                 for (int j = 0; j < groupLen; j++) {
                     int curIndex = j + b * groupLen;
-                    if (int(mod(float(ox), float(${stride_h}))) == 0 && int(mod(float(oy), float(${stride_v}))) == 0) {
+                    if (calMod(ox, int(${stride_h})) == 0 && calMod(oy, int(${stride_v})) == 0) {
                         temp_x = int(floor(float(ox) / float(${stride_h})));
                         temp_y = int(floor(float(oy) / float(${stride_v})));
                         if (temp_x < ${origin.width_shape} && temp_y < ${origin.height_shape}) {
@@ -71,21 +74,26 @@ function mainFunc({
             }
             oy += ${dilation_v};
         }
+        
+        ${bias ? 'res += getValueFromTensorPos_bias(0, 0, 0, c);' : ''}
+        
+        if (${fuse_relu}) {
+            res = max(0.0, res);
+        }
+        else if (${act_type === 'relu6'}) {
+            res = min(max(0.0, res), 6.0);
+        }
+        
         setOutput(float(res));
     }
 `;
 }
 export default {
     mainFunc,
-    params: [
-        'strides',
-        'paddings',
-        'dilations',
-        'groups'
-    ],
     textureFuncConf: {
         filter: ['getValueFromTensorPos'],
-        origin: ['getValueFromTensorPos']
+        origin: ['getValueFromTensorPos'],
+        bias: ['getValueFromTensorPos']
     },
     behaviors: [
         'adaptPaddings',

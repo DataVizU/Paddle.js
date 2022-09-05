@@ -14,7 +14,6 @@ let detectRunner = null as Runner;
 let recRunner = null as Runner;
 let anchorResults = null;
 const detFeedShape = 256;
-const recFeedShape = 224;
 const canvas = document.createElement('canvas') as HTMLCanvasElement;
 initCanvas();
 
@@ -33,32 +32,13 @@ export async function load() {
     anchorResults = anchor.replace(/\s+/g, ',').split(',').map(item => +item);
 
     detectRunner = new Runner({
-        modelPath: 'https://paddlejs.cdn.bcebos.com/models/gesture_detection',
-        fileCount: 2,
-        feedShape: {
-            fw: detFeedShape,
-            fh: detFeedShape
-        },
-        fill: '#fff',
-        targetSize: {
-            height: detFeedShape,
-            width: detFeedShape
-        }
+        modelPath: 'https://paddlejs.bj.bcebos.com/models/fuse/gesture/gesture_det_fuse_activation/model.json',
+        webglFeedProcess: true
     });
     const detectInit = detectRunner.init();
 
     recRunner = new Runner({
-        modelPath: 'https://paddlejs.cdn.bcebos.com/models/gesture_recognization',
-        fileCount: 1,
-        feedShape: {
-            fw: recFeedShape,
-            fh: recFeedShape
-        },
-        fill: '#fff',
-        targetSize: {
-            height: recFeedShape,
-            width: recFeedShape
-        }
+        modelPath: 'https://paddlejs.bj.bcebos.com/models/fuse/gesture/gesture_rec_fuse_activation/model.json'
     });
     const recInit = recRunner.init();
 

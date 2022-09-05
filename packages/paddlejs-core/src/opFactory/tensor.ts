@@ -10,9 +10,13 @@ interface TensorParams {
     name: string;
     shape: number[];
     data: Float32Array | number[] | null;
+    persistable: boolean;
+    interpType?: string;
     isPacked?: boolean;
     binding?: number;
     noLayout?: boolean;
+    dataLayout?: string;
+    runtime?: number;
 }
 
 export default class Tensor {
@@ -25,56 +29,65 @@ export default class Tensor {
     unformattedShapeLength: number = 0;
     shape_texture: number[] = [];
     exceedMax: boolean = false;
-    data: Float32Array | number[] | null = null;
+    data: Float32Array | number[] | Uint8Array | null = null;
+    persistable: boolean = false;
+    interpType: string = 'NEAREST';
+    dataLayout: string = '';
+    runtime: number = 0;
+    binding: number = 0;
 
     constructor(opts: TensorParams) {
+        const {
+            isPacked = false,
+            name,
+            runtime = 0,
+            persistable = false,
+            type,
+            dataLayout,
+            interpType = 'NEAREST',
+            shape,
+            data: varData,
+            binding = 0
+        } = opts;
         this.opts = opts;
         // 数据存储方式
-        this.isPacked = opts.isPacked || false;
+        this.isPacked = isPacked;
         // 设置tensor名字
-        this.name = opts.name;
+        this.name = name;
+        this.runtime = runtime;
+        this.binding = binding;
+        this.persistable = persistable;
+        this.interpType = interpType;
         // 设置 tensorId
-        this.tensorId = opts.type;
+        this.tensorId = type;
+        // set dataLayout
+        this.dataLayout = dataLayout;
         // 保留 model 原生 shape 长度
-        this.unformattedShapeLength = opts.shape.length;
+        this.unformattedShapeLength = shape.length;
         // tensor的形状
-        this.shape = Utils.formatShape(opts.shape);
-        const shape = this.shape;
+        this.shape = Utils.formatShape(shape);
         // 原始数据个数
-        this.total = shape.reduce((all: number, num: number) => all * num);
+        this.total = this.shape.reduce((all: number, num: number) => all * num);
 
         if (opts.noLayout) {
             return;
         }
-        // 获取转换到texture后的信息
-        const {
-            exceedMax,
-            shape: shape_texture
-        } = Utils.getTextureInfoFromTensorShape(shape, opts.isPacked);
-        this.shape_texture = shape_texture;
-        this.exceedMax = exceedMax;
+
         // tensor数据
-        if (opts.type.endsWith('image')) {
-            this.data = opts.data;
-        }
-        else if (opts.data && opts.data.length) {
-            const nhwcData: Float32Array | number[] = Utils.nchw2nhwc(
-                opts.data,
-                [shape[0], shape[1] * (this.isPacked ? 4 : 1), shape[2], shape[3]]
-            );
-            this.data = new Float32Array(nhwcData);
+        if (varData && varData.length) {
+            this.data = Utils.genTensorData(varData, this.dataLayout, this.shape, this.isPacked);
             opts.data = null;
         }
     }
 
     get width_texture() {
         const length = this.shape_texture.length;
-        return this.shape_texture[length - 1];
+        return this.shape_texture[length - 1] || 1;
     }
 
     get height_texture() {
         const length = this.shape_texture.length;
-        return this.shape_texture[length - 2];
+        return this.shape_texture[length - 2] || 1;
     }
 
     get width_shape() {
@@ -90,14 +103,6 @@ export default class Tensor {
     get channel() {
         const length = this.shape.length;
         return this.shape[length - 3];
-    }
-
-    get binding() {
-        return this.opts.binding;
-    }
-
-    get limit() {
-        return this.exceedMax ? 'Limit' : '';
     }
 
     get length_shape() {

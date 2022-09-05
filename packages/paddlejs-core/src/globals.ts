@@ -1,5 +1,5 @@
 import { OpInfo, Ops } from './commons/interface';
-import { getOrMakeGlobalProperty } from './commons/utils';
+import { getOrMakeGlobalProperty, getGlobalInterface } from './commons/utils';
 
 interface OpRegistry {
     ops: Ops;
@@ -24,7 +24,9 @@ function registerOp(opInfo: OpInfo, key: string) {
         conf,
         params,
         main,
-        main_packed = '',
+        mainFunc,
+        textureFuncConf,
+        commonFuncConf,
         behaviors = []
     } = opInfo;
 
@@ -38,7 +40,9 @@ function registerOp(opInfo: OpInfo, key: string) {
         conf,
         params,
         main,
-        main_packed,
+        mainFunc,
+        textureFuncConf,
+        commonFuncConf,
         behaviors
     };
 }
@@ -62,7 +66,15 @@ function registerBackend(backend: string, backendInstance: any, ops: Ops) {
 
 GLOBALS = getOrMakeGlobalProperty('GLOBALS', GLOBALS);
 
+const ns = getGlobalInterface();
+// in case 'ReferenceError: ImageBitmap is not defined'
+if (!ns.ImageBitmap) {
+    ns.ImageBitmap = function () {};
+}
+
 export {
     GLOBALS,
-    registerBackend
+    registerBackend,
+    registerOp,
+    getGlobalInterface
 };

@@ -11,6 +11,7 @@ const commonFuncBehaviors = {
     sigmoid: ['transToSigmoid'],
     hard_sigmoid: ['transToHardSigmoid'],
     pow: ['transToPow'],
+    exp: ['transToExp'],
     sqrt: ['transToSqrt'],
     tanh: ['transToTanh']
 };
@@ -33,11 +34,6 @@ function mainFunc(
 export default function (funcName) {
     return {
         mainFunc,
-        params: [
-            'multi_value',
-            'bias_value',
-            'active_function'
-        ],
         textureFuncConf: {
             origin: ['getPixelsFromTexturePos']
         },

@@ -4,14 +4,15 @@ import map from './map.json';
 load();
 
 async function load() {
-    const path = 'https://paddlejs.cdn.bcebos.com/models/mobileNetV2';
+    const path = 'https://paddlejs.bj.bcebos.com/models/fuse/mobilenet/mobileNetV2_fuse_activation/model.json';
     await mobilenet.load({
         path,
-        fileCount: 4,
         mean: [0.485, 0.456, 0.406],
         std: [0.229, 0.224, 0.225]
     }, map);
     document.getElementById('loading')!.style.display = 'none';
+    const img = document.getElementById('image') as HTMLImageElement;
+    run(img);
 }
 
 async function run(input?: HTMLElement) {

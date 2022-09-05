@@ -5,7 +5,9 @@
 import { GLOBALS } from '../globals';
 import env from '../env';
 import OpExecutor from '../opFactory/opExecutor';
+import { findVarByKey } from '../commons/utils';
 import Transformer from './transformer';
+
 
 const packedOpConditions = {
     conv2d: (op, vars) => {
@@ -16,10 +18,10 @@ const packedOpConditions = {
         if (inputName === 'image') {
             return false;
         }
-        const inputOpData = vars.find(item => item.name === inputName);
+        const inputOpData = findVarByKey(vars, inputName);
         const inputShape = inputOpData.shape;
         // let inputData = inputOpData.data;
-        const filterOpData = vars.find(item => item.name === filterName);
+        const filterOpData = findVarByKey(vars, filterName);
         const filterShape = filterOpData.shape;
         // let filterData = filterOpData.data;
         // model 里 模型shape 可能不全
@@ -100,6 +102,7 @@ function transformOriginOp(op, opsMap) {
         .forEach(key => {
             op.outputs[key] = [`${op.outputs[key]}_packed`];
         });
+    op.type = `${op.type}_packing`;
     op.id = `${op.type}_${+new Date()}_${opsMap.length}`;
     op.isPacked = true;
 }
@@ -130,7 +133,7 @@ export default class TexturePacking extends Transformer {
             outputs
         } = originOp;
         const connectInputName = inputs.Input[0];
-        const connectOutputName = outputs.Output[0];
+        const connectOutputName = outputs.Output ? outputs.Output[0] : outputs.Out[0];
         const unpacked2packedOp = createUnpacked2packedOp({
             inputName: connectInputName,
             outputName: `${connectInputName}_packed`

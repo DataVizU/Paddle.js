@@ -17,20 +17,13 @@ float prelu(float x, float p, float b) {
 
 const relu6 = `
 float relu6(float x, float threshold, float b) {
-    float result = max(0.0, x);
-    result = min(result, threshold);
+    float result = min(max(0.0, x), threshold);
     return result;
 }`;
 
 const leakyRelu = `
 float leakyRelu(float x, float p, float b) {
-    float result = 0.0
-    if (x > 0.0) {
-        result = x;
-    }
-    else {
-        result = p * x;
-    }
+    float result = max(x, x * p);
     return result;
 }`;
 
@@ -73,12 +66,19 @@ const pow_func = `
 
 const tanh_func = `
 float tanh_func(float x, float y, float z) {
-    return tanh(x);
+    return tanh_calc(x);
+}`;
+
+const exp_func = `
+float exp_func(float x, float y, float z) {
+    float result = exp(x);
+    return result;
 }`;
 
 export {
     prelu,
     relu6,
+    exp_func,
     leakyRelu,
     scale,
     sigmoid,

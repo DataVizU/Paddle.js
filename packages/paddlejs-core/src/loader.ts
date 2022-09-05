@@ -3,7 +3,8 @@
  */
 
 import env from './env';
-import { Model, ModelVar } from './commons/interface';
+import { Model, ParamObject } from './commons/interface';
+import { traverseVars } from './commons/utils';
 
 interface UrlConf {
     dir: string;
@@ -36,7 +37,7 @@ export default class ModelLoader {
     };
 
     constructor(modelPath: string) {
-        let modelDir = '';
+        let modelDir = modelPath;
         let filename = 'model.json';
         if (modelPath.endsWith('.json')) {
             const dirPosIndex = modelPath.lastIndexOf('/') + 1;
@@ -69,14 +70,17 @@ export default class ModelLoader {
         if (this.separateChunk) {
             if (this.dataType === 'binary') {
                 await this.fetchChunks().then(allChunksData =>
-                    this.traverse(modelInfo.vars, allChunksData)
+                    ModelLoader.allocateParamsVar(modelInfo.vars, allChunksData)
                 );
             }
         }
         return modelInfo;
     }
 
-    fetchOneChunk(path: string) {
+    async fetchOneChunk(path: string) {
+        if (env.get('fetch')) {
+            return await env.get('fetch')(path, { type: 'arrayBuffer' });
+        };
         return this.fetch(path).then(request => {
             return request.arrayBuffer();
         });
@@ -93,7 +97,7 @@ export default class ModelLoader {
         return `chunk_${i}.dat`;
     }
 
-    fetchChunks() {
+    async fetchChunks() {
         const counts = this.chunkNum;
         const chunkArray: any[] = [];
         for (let i = 1; i <= counts; i++) {
@@ -101,9 +105,7 @@ export default class ModelLoader {
                 this.fetchOneChunk(this.urlConf.dir + this.getFileName(i))
             );
         }
-        // console.time('加载时间');
         return Promise.all(chunkArray).then(chunks => {
-            // console.timeEnd('加载时间');
             let chunksLength = 0;
             const f32Array: any[] = [];
             let float32Chunk;
@@ -124,22 +126,24 @@ export default class ModelLoader {
         });
     }
 
-    traverse(arr: ModelVar[], allChunksData: Float32Array) {
+    static allocateParamsVar(vars, allChunksData: Float32Array | ParamObject) {
         let marker = 0; // 读到哪个位置了
         let len; // 当前op长度
-        arr.filter(item => {
-            return item.name;
-        }).forEach(item => {
+        const chunkData: number[] = Array.isArray(allChunksData) ? allChunksData : Object.values(allChunksData);
+        traverseVars(vars, item => {
             len = item.shape.reduce((a, b) => a * b); // 长度为shape的乘积
             // 为了减少模型体积，模型转换工具不会导出非persistable的数据，这里只需要读取persistable的数据
             if (item.persistable) {
-                item.data = allChunksData.slice(marker, marker + len);
+                item.data = chunkData.slice(marker, marker + len);
                 marker += len;
             }
         });
     }
 
     fetch(path: string, params?: FetchParams) {
+        if (env.get('fetch')) {
+            return env.get('fetch')(path, params || {});
+        }
         const fetchParams = params || this.params;
         const method = fetchParams.method || 'get';
         const HeadersClass = this.inNode
@@ -180,6 +184,9 @@ export default class ModelLoader {
             load = new Promise((resolve, reject) => {
                 this.fetch(path, params)
                     .then(response => {
+                        if (env.get('fetch')) {
+                            return response;
+                        }
                         return this.isLocalFile && this.inNode
                             ? JSON.parse(response)
                             : response.json();

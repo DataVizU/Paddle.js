@@ -1,7 +1,7 @@
 import { Runner } from '@paddlejs/paddlejs-core';
 import { glInstance } from '../../src/index';
 
-const opName = 'arg_max';
+const opName = 'slice';
 const modelDir = '/test/op/data/';
 const modelPath = `${modelDir}${opName}.json`;
 
@@ -16,7 +16,7 @@ async function run() {
         needPreheat: false
     });
     await runner.init();
-    const executeOP = runner.weightMap[0];
+    const executeOP = runner.weightMap[1];
     runner.executeOp(executeOP);
     const res = await glInstance.read();
     console.log(res);

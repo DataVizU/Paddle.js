@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>paddle ocr detection demo</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <style>
+        .wrapper {
+            position: relative;
+            display: flex;
+            text-align: left;
+            padding: 2%;
+            flex-wrap: wrap;
+            min-height: 500px;
+        }
+
+        .title {
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .left {
+            display: flex;
+            flex-wrap: wrap;
+            width: min-content;
+            min-width: 55%;
+        }
+
+        .box {
+            min-width: 320px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 100px;
+            padding: 10px;
+        }
+
+        .tool {
+            margin-right: 50px;
+            flex-shrink: 0;
+        }
+
+        .canvas {
+            margin-right: 50px;
+        }
+
+        #image {
+            display: block;
+            margin-top: 10px;
+        }
+
+        #txt {
+            line-height: 2;
+            height: min-content;
+        }
+
+        #isLoading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, .5);
+        }
+
+        #isLoading .loading-text {
+            color: #fff;
+            font-size: 24px;
+            text-align: center;
+            line-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="left">
+        <div class="tool box">
+            <p class="title">上传文本图片：</p>
+            <input type="file" id="uploadImg" />
+            <img id="image" />
+        </div>
+        <div class="canvas box">
+            <p class="title">文字区域框选：</p>
+            <canvas id="canvas"></canvas>
+        </div>
+    </div>
+    <div class="box">
+        <p class="title">文字识别结果：</p>
+        <div id="txt"></div>
+    </div>
+</div>
+
+<div id="isLoading">
+    <p class="loading-text center">loading中……</p>
+</div>
+
+</body>
+</html>

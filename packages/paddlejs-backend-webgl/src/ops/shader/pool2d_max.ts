@@ -12,7 +12,7 @@ function mainFunc(
 ) {
     const [stride_v = 1, stride_h = 1] = strides;
     const [padTop = 0, padLeft = 0] = paddings;
-    const [ksize_x, ksize_y] = ksize;
+    const [ksize_y, ksize_x] = ksize;
     const originShape = recoverShape(origin);
     let computedIndex = '';
     let outputCode = 'setOutput(float(res));';
@@ -24,11 +24,10 @@ function mainFunc(
         `;
         outputCode = 'setOutput(float(index));';
     }
-
     return `
     // start函数
     void main(void) {
-        float res = -1. / 0.;
+        float res = -1.70141184e38;
         int index = 0;
         // 获取output的坐标
         ivec4 out_pos = getOutputTensorPos();
@@ -67,13 +66,6 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'strides',
-        'paddings',
-        'ksize',
-        'global_pooling',
-        'runtime'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
     },

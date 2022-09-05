@@ -1,6 +1,8 @@
 <template lang="pug">
     div
         el-row(type=flex justify="start" align="middle")
+            div renderer: {{ renderer }}
+        el-row(type=flex justify="start" align="middle")
             el-col(:span="8")
                 el-row.model-row(align="middle" type="flex")
                     el-col(:span="6")
@@ -46,25 +48,68 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { Runner } from '@paddlejs/paddlejs-core';
-import { GLOBALS } from '@paddlejs/paddlejs-core/globals';
-import '@paddlejs/paddlejs-backend-webgl';
+import { Runner, env } from '@paddlejs/paddlejs-core';
+import { glInstance } from '@paddlejs/paddlejs-backend-webgl';
 import Utils from './utils';
 
 export default Vue.extend({
     name: 'config',
     data() {
         return {
+            renderer: '',
             modelList:  [
+                {
+                    name: 'face_detect_fuse',
+                    path: 'https://paddlejs.cdn.bcebos.com/models/fuse/facedetect'
+                },
+                {
+                    name: 'ocr_rec_fuse',
+                    path: 'https://paddlejs.bj.bcebos.com/models/fuse/ocr/ch_PP-OCRv2_rec_fuse_activation'
+                },
+                {
+                    name: 'ocr_det_fuse',
+                    path: 'https://paddlejs.bj.bcebos.com/models/fuse/ocr/ch_PP-OCRv2_det_fuse_activation'
+                },
+                {
+                    name: 'mobileNetV2_fuse',
+                    path: 'https://paddlejs.bj.bcebos.com/models/fuse/mobilenet/mobileNetV2_fuse_activation'
+                },
+                {
+                    name: 'detect_fuse',
+                    path: 'https://paddlejs.bj.bcebos.com/models/fuse/detect/detect_fuse_activation'
+                },
+                {
+                    name: 'gesture_det_fuse',
+                    path: 'https://paddlejs.bj.bcebos.com/models/fuse/gesture/gesture_det_fuse_activation'
+                },
+                {
+                    name: 'gesture_rec_fuse',
+                    path: 'https://paddlejs.bj.bcebos.com/models/fuse/gesture/gesture_rec_fuse_activation'
+                },
+                {
+                    name: 'humanseg_288x160_fuse',
+                    path: 'https://paddlejs.bj.bcebos.com/models/fuse/humanseg/humanseg_288x160_fuse_activation'
+                },
+                {
+                    name: 'humanseg_398x224_fuse',
+                    path: 'https://paddlejs.bj.bcebos.com/models/fuse/humanseg/humanseg_398x224_fuse_activation'
+                },
+                {
+                    name: 'detect',
+                    path: 'https://paddlejs.bj.bcebos.com/models/detect_js'
+                },
+                {
+                    name: 'face_detect',
+                    path: 'https://paddlejs.cdn.bcebos.com/models/face_detect'
+                },
                 {
                     name: 'mobileNetV2',
                     feedShape: {
                         fw: 224,
                         fh: 224
                     },
-                    fetchShape: [1, 1000, 10, 1],
+                    fetchShape: [1, 1000, 1, 1],
                     fill: '#fff',
-                    targetSize: { height: 224, width: 224 },
                     needPreheat: false
                 },
                 {
@@ -73,9 +118,8 @@ export default Vue.extend({
                         fw: 224,
                         fh: 224
                     },
-                    fetchShape: [1, 1000, 10, 1],
+                    fetchShape: [1, 1000, 1, 1],
                     fill: '#fff',
-                    targetSize: { height: 224, width: 224 },
                     needPreheat: false
                 },
                 {
@@ -86,40 +130,36 @@ export default Vue.extend({
                     },
                     fetchShape: [1, 40, 10, 1],
                     fill: '#fff',
-                    targetSize: { height: 224, width: 224 },
                     needPreheat: false
                 },
                 {
-                    name: 'gesture_detect',
+                    name: 'gesture_detection',
                     feedShape: {
                         fw: 256,
                         fh: 256
                     },
                     fetchShape: [1, 1920, 10 , 1],
                     fill: '#fff',
-                    targetSize: { height: 256, width: 256 },
                     needPreheat: false
                 },
                 {
-                    name: 'gesture_rec',
+                    name: 'gesture_recognization',
                     feedShape: {
                         fw: 224,
                         fh: 224
                     },
                     fetchShape: [1, 9, 1, 1],
                     fill: '#fff',
-                    targetSize: { height: 224, width: 224 },
                     needPreheat: false
                 },
                 {
-                    name: 'humanseg',
+                    name: 'shufflenetv2_398x224',
                     feedShape: {
-                        fw: 192,
-                        fh: 192
+                        fw: 398,
+                        fh: 224
                     },
-                    fetchShape: [1, 2, 192, 192],
+                    fetchShape: [1, 2, 398, 224],
                     fill: '#fff',
-                    targetSize: { height: 224, width: 224 },
                     needPreheat: false
                 }
             ],
@@ -128,7 +168,7 @@ export default Vue.extend({
             modelPath: '',
             curModel: null,
             progressText: '',
-            times: null,
+            times: 1,
             stage: null,
             loadT: '--',
             preheatT: '--',
@@ -153,6 +193,9 @@ export default Vue.extend({
             ]
         }
     },
+    created() {
+        this.renderer = this.getHardwareInfo();
+    },
     methods: {
         tableRowClassName({row}): string | Boolean {
             return row.name === 'total' && 'detail-index-row';
@@ -163,7 +206,7 @@ export default Vue.extend({
         changeModel(value: Row): void {
             // console.log(value);
             this.modelSeleted = value.name;
-            this.modelPath = this.modelPathPrefix + value.name;
+            this.modelPath = value.path ? value.path : this.modelPathPrefix + value.name;
             // console.log(this.modelPath);
             this.curModel = {...value, modelPath: this.modelPath};
         },
@@ -176,12 +219,13 @@ export default Vue.extend({
                 needPreheat: false,
                 fileDownload: false,
             });
+            env.set('performance', true);
             const start = Date.now();
             await paddle.init();
             this.loadT = Date.now() - start + '';
             this.stage = 2;
 
-            this.gl = GLOBALS.backendInstance.gl;
+            this.gl = glInstance.gl;
         },
         async preheat(): Promise<void> {
             const start = Date.now();
@@ -211,6 +255,7 @@ export default Vue.extend({
             let totaltimeList = [];
             let opCount = 0;
             const ops = [];
+
             while(curTimes <= totalTimes) {
                 const start = Date.now();
                 await this.paddle.execute();
@@ -218,7 +263,7 @@ export default Vue.extend({
                 remainWholeT += t;
                     // this.remainOthersT = +(remainWholeT / (curTimes - 2).toFixed(4));
 
-                const queryList = GLOBALS.backendInstance.queryList;
+                const queryList = glInstance.queryList;
 
 
                 if (queryList && queryList.length) {
@@ -315,6 +360,16 @@ export default Vue.extend({
                 acc[name].count += count;
             }
             return acc;
+        },
+        getHardwareInfo() {
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl2');
+            const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+            if (!debugInfo) {
+                return '';
+            }
+            const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+            return renderer;
         }
     }
 })

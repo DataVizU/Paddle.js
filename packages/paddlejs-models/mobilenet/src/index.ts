@@ -2,12 +2,11 @@
  * @file mobilenet model
  */
 
-import { Runner } from '@paddlejs/paddlejs-core';
+import { Runner, env } from '@paddlejs/paddlejs-core';
 import '@paddlejs/paddlejs-backend-webgl';
 
 interface ModelConfig {
     path: string;
-    fileCount: number;
     mean?: number[];
     std?: number[];
     needPreheat?: boolean;
@@ -25,7 +24,6 @@ export async function load(config: ModelConfig, map: string[] | MobilenetMap) {
 
     const {
         path,
-        fileCount,
         mean,
         std,
         needPreheat = true
@@ -33,22 +31,14 @@ export async function load(config: ModelConfig, map: string[] | MobilenetMap) {
 
     runner = new Runner({
         modelPath: path,
-        fileCount: fileCount || 1,
-        feedShape: {
-            fw: 224,
-            fh: 224
-        },
         fill: '#fff',
-        targetSize: {
-            height: 224,
-            width: 224
-        },
         mean: mean || [],
         std: std || [],
+        scale: 256,
         needPreheat
     });
+    env.set('webgl_pack_channel', true);
     await runner.init();
-
 }
 
 // 获取数组中的最大值索引

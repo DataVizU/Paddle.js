@@ -1,6 +1,6 @@
 import clipper from 'js-clipper';
-import NP from 'number-precision';
-import CV from '@paddlejs-mediapipe/opencv/library/opencv';
+import { enableBoundaryChecking, plus, divide } from 'number-precision';
+import CV from '@paddlejs-mediapipe/opencv/library/opencv_ocr';
 
 const Polygon = require('d3-polygon');
 
@@ -16,7 +16,7 @@ export default class DBPostprocess {
     private height: number;
 
     constructor(result: number[], shape: number[]) {
-        NP.enableBoundaryChecking(false);
+        enableBoundaryChecking(false);
         this.thresh = 0.3;
         this.box_thresh = 0.5;
         this.max_candidates = 1000;
@@ -33,7 +33,7 @@ export default class DBPostprocess {
 
     public outputBox() {
         // eslint-disable-next-line new-cap
-        const src = new CV.matFromArray(640, 640, CV.CV_8UC1, this.segmentation);
+        const src = new CV.matFromArray(960, 960, CV.CV_8UC1, this.segmentation);
         const contours = new CV.MatVector();
         const hierarchy = new CV.Mat();
         // 获取轮廓
@@ -160,7 +160,7 @@ export default class DBPostprocess {
         CV.fillPoly(mask, pts, color, 1);
         const sliceArr = [];
         for (let i = ymin; i < ymax + 1; i++) {
-            sliceArr.push(...bitmap.slice(640 * i + xmin, 640 * i + xmax + 1));
+            sliceArr.push(...bitmap.slice(960 * i + xmin, 960 * i + xmax + 1));
         }
         const mean = this.mean(sliceArr, mask.data);
         mask.delete();
@@ -205,11 +205,11 @@ export default class DBPostprocess {
         let length = 0;
         for (let i = 0; i < data.length; i++) {
             if (mask[i]) {
-                sum = NP.plus(sum, data[i]);
+                sum = plus(sum, data[i]);
                 length++;
             }
         }
-        const num = NP.divide(sum, length);
+        const num = divide(sum, length);
         return num;
     }
 }

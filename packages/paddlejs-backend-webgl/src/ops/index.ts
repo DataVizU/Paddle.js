@@ -10,11 +10,13 @@ import conv2d_depthwise from './shader/conv2d_depthwise';
 import depthwise_conv2d from './shader/depthwise_conv2d';
 import conv2d_elementwise_add from './shader/conv2d_elementwise_add';
 import pool2d from './shader/pool2d';
+import pool2d_avg_adaptive from './shader/pool2d_avg_adaptive';
 import pool2d_max from './shader/pool2d_max';
 import pool2d_winograd from './shader/pool2d_winograd';
 import elementwise_add from './shader/elementwise_add';
 import mul from './shader/mul';
 import matmul from './shader/matmul';
+import matmul_v2 from './shader/matmul_v2';
 import fc from './shader/fc';
 import dropout from './shader/dropout';
 import concat from './shader/concat';
@@ -47,8 +49,22 @@ import nearest_interp_v2 from './shader/nearest_interp_v2';
 import elementwise_pow from './shader/elementwise_pow';
 import elementwise_sub from './shader/elementwise_sub';
 import cast from './shader/cast';
+import fill_constant_batch_size_like from './shader/fill_constant_batch_size_like';
+import rnn_matmul from './shader/rnn/rnn_matmul';
+import rnn_cell from './shader/rnn/rnn_cell';
+import rnn_hidden from './shader/rnn/rnn_hidden';
+import rnn_origin from './shader/rnn/rnn_origin';
+import pool2d_avg from './shader/pool2d_avg';
+import density_prior_box from './shader/density_prior_box';
+import box_coder from './shader/box_coder';
+import prior_box from './shader/prior_box';
+import stack from './shader/stack';
+import slice from './shader/slice';
 
-import { pack_out, nhwc_2_nchw, unpacked_2_packed, packed_2_unpacked, feedPost } from './shader/custom';
+import {
+    imgFeed, pack_out, nhwc_2_nchw, unpacked_2_packed,
+    packed_2_unpacked, feedPost
+} from './shader/custom';
 
 
 const ops = {
@@ -70,6 +86,7 @@ const ops = {
     elementwise_sub,
     mul,
     matmul,
+    matmul_v2,
     fc,
     dropout,
     concat,
@@ -77,6 +94,7 @@ const ops = {
     split,
     softmax,
     batchnorm,
+    reshape: reshape2,
     reshape2,
     bilinear_interp,
     transpose2,
@@ -84,6 +102,7 @@ const ops = {
     packed_2_unpacked,
     unsqueeze2,
     flatten_contiguous_range,
+    flatten2: reshape2,
     greater_than,
     reduce_sum,
     where,
@@ -93,6 +112,13 @@ const ops = {
     nearest_interp,
     nearest_interp_v2,
     cast,
+    fill_constant_batch_size_like,
+    rnn_matmul,
+    rnn_hidden,
+    rnn_cell,
+    rnn_origin,
+    pool2d_avg,
+    pool2d_avg_adaptive,
     prelu: dynamic('prelu'),
     relu6: dynamic('relu6'),
     leakyRelu: dynamic('leakyRelu'),
@@ -103,13 +129,20 @@ const ops = {
     pow: dynamic('pow'),
     sqrt: dynamic('sqrt'),
     tanh: dynamic('tanh'),
+    exp: dynamic('exp'),
     squeeze2,
     pad3d,
     bilinear_interp_v2,
     shuffle_channel,
     pack_out,
     nhwc_2_nchw,
-    feedPost
+    feedPost,
+    imgFeed,
+    box_coder,
+    density_prior_box,
+    prior_box,
+    stack,
+    slice
 };
 export {
     ops

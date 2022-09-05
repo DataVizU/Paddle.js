@@ -1,64 +1,63 @@
 /**
- * @file concat_mul
- * @description concat inputs X supports no more than 4 tensors, eg. [a1, a2, a3, a4]
+ * @file concat_mul dynamic inputs
+ * @description concat inputs X supports no more than 15 tensors, eg. [a1, a2, a3, a4, ... , a15]
  */
 
 /* eslint-disable max-lines */
 function mainFunc(
-    {},
-    { dim, inputs_dim, append_num, fourth_num = 0, fourInputs = false }
+    tensors,
+    { dim }
 ) {
-    const dim_total = inputs_dim + append_num;
-    const z_total = inputs_dim + append_num + fourth_num;
+    const inputTensorsKey = Object.keys(tensors).filter(item => item !== 'out');
+    const inputTensors = inputTensorsKey.map(key => tensors[key]);
+    const inputTensorDimShape = inputTensors.map(item => {
+        const {
+            width_shape,
+            height_shape,
+            channel,
+            total_shape
+        } = item;
+        const batch = total_shape / (width_shape * height_shape * channel);
+        const shape = [batch, channel, height_shape, width_shape];
+        return shape[dim];
+    });
+    const inputsDimAccShape = inputTensorDimShape.map((_, index) => {
+        return inputTensorDimShape.slice(0, index + 1).reduce((acc, cur) => acc + cur, 0);
+    });
+
+    let getValueFromTensorPosCode = '';
+    inputsDimAccShape.forEach((shape, index) => {
+        if (index === 0) {
+            getValueFromTensorPosCode += `
+            if (oPos[${dim}] < ${shape}) {
+                o = getValueFromTensorPos_origin(oPos.r, oPos.g, oPos.b, oPos.a);
+            }`;
+        }
+        else {
+            getValueFromTensorPosCode += `
+            else if (oPos[${dim}] < ${shape}) {
+                oPos[${dim}] = oPos[${dim}] - ${inputsDimAccShape[index - 1]};
+                o = getValueFromTensorPos_origin_${index}(oPos.r, oPos.g, oPos.b, oPos.a);
+            }
+            `;
+        }
+    });
+
     return `
     // start函数
     void main(void) {
         ivec4 oPos = getOutputTensorPos();
         // 输出坐标转换为输入坐标
         float o = 0.0;
-
-        if (oPos[${dim}] < ${inputs_dim}) {
-            o = getValueFromTensorPos_origin(oPos.r, oPos.g, oPos.b, oPos.a);
-        }
-        else if (oPos[${dim}] < ${dim_total}) {
-            oPos[${dim}] = oPos[${dim}] - ${inputs_dim};
-            o = getValueFromTensorPos_counter(oPos.r, oPos.g, oPos.b, oPos.a);
-        }
-        else {
-            ${fourInputs
-        ? `
-            if (oPos[${dim}] < ${z_total}) {
-                oPos[${dim}] = oPos[${dim}] - ${dim_total};
-                o = getValueFromTensorPos_appender(oPos.r, oPos.g, oPos.b, oPos.a);
-            }
-            else {
-                oPos[${dim}] = oPos[${dim}] - ${z_total};
-                o = getValueFromTensorPos_fourth(oPos.r, oPos.g, oPos.b, oPos.a);
-            }
-        `
-        : `
-            oPos[${dim}] = oPos[${dim}] - ${dim_total};
-            o = getValueFromTensorPos_appender(oPos.r, oPos.g, oPos.b, oPos.a);
-        `}
-        }
+        ${getValueFromTensorPosCode}
         setOutput(float(o));
     }
     `;
 }
 export default {
     mainFunc,
-    params: [
-        'dim',
-        'inputs_dim',
-        'append_num',
-        'fourInputs',
-        'fourth_num'
-    ],
     textureFuncConf: {
-        origin: ['getValueFromTensorPos'],
-        counter: ['getValueFromTensorPos'],
-        appender: ['getValueFromTensorPos'],
-        fourth: ['getValueFromTensorPos']
+        '@all': ['getValueFromTensorPos']
     },
     behaviors: [
         'normalizeDim'

@@ -4,50 +4,59 @@
 
 import { Runner, env } from '@paddlejs/paddlejs-core';
 import '@paddlejs/paddlejs-backend-webgl';
-// @ts-ignore
 import WebGLImageFilter from '../thirdParty/webgl-image-filter';
 
 
 let runner = null as Runner;
 let inputElement = null;
-const WIDTH = 398;
-const HEIGHT = 224;
 
-let tempBackgroundCanvas = null;
+let WIDTH = 398;
+let HEIGHT = 224;
+
 let backgroundSize = null;
 
 const blurFilter = new WebGLImageFilter();
 blurFilter.reset();
-blurFilter.addFilter('blur', 15);
+blurFilter.addFilter('blur', 10);
 
 
-export async function load() {
-    const path = 'https://paddlejs.cdn.bcebos.com/models/shufflenetv2_humanseg';
+export async function load(needPreheat = true, enableLightModel = false, customModel = null) {
+    const modelpath = 'https://paddlejs.bj.bcebos.com/models/fuse/humanseg/humanseg_398x224_fuse_activation/model.json';
+    const lightModelPath = 'https://paddlejs.bj.bcebos.com/models/fuse/humanseg/humanseg_288x160_fuse_activation/model.json';
+    const path = customModel
+        ? customModel
+        : enableLightModel ? lightModelPath : modelpath;
+    if (enableLightModel) {
+        WIDTH = 288;
+        HEIGHT = 160;
+    }
 
     runner = new Runner({
         modelPath: path,
-        feedShape: {
-            fw: WIDTH,
-            fh: HEIGHT
-        },
-        fill: '#fff',
-        targetSize: {
-            height: HEIGHT,
-            width: WIDTH
-        },
+        needPreheat: needPreheat !== undefined ? needPreheat : true,
         mean: [0.5, 0.5, 0.5],
-        std: [0.5, 0.5, 0.5]
+        std: [0.5, 0.5, 0.5],
+        webglFeedProcess: true
     });
+
     env.set('webgl_pack_channel', true);
     env.set('webgl_pack_output', true);
-    env.set('webgl_feed_process', true);
+
     await runner.init();
+
+    if (runner.feedShape) {
+        WIDTH = runner.feedShape.fw;
+        HEIGHT = runner.feedShape.fh;
+    }
+}
+
+export async function preheat() {
+    return await runner.preheat();
 }
 
 export async function getGrayValue(input: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement) {
     inputElement = input;
-    const res = await runner.predict(input);
-    const seg_values = res;
+    const seg_values = await runner.predict(input);
     backgroundSize = genBackgroundSize();
     return {
         width: WIDTH,
@@ -102,17 +111,15 @@ function genBackgroundSize() {
  * draw human seg
  * @param {Array} seg_values seg values of the input image
  * @param {HTMLCanvasElement} canvas the dest canvas draws the pixels
+ * @param {HTMLCanvasElement} backgroundCanvas the background canvas draws the pixels
  */
 export function drawHumanSeg(
     seg_values: number[],
     canvas: HTMLCanvasElement,
-    useBackground: boolean = true
+    backgroundCanvas?: HTMLCanvasElement | HTMLImageElement
 ) {
     const inputWidth = inputElement.naturalWidth || inputElement.width;
     const inputHeight = inputElement.naturalHeight || inputElement.height;
-    if (useBackground && !tempBackgroundCanvas) {
-        tempBackgroundCanvas = getScaledBackgroundCanvas(canvas, inputWidth, inputHeight);
-    }
 
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     canvas.width = WIDTH;
@@ -127,7 +134,7 @@ export function drawHumanSeg(
     tempContext.drawImage(inputElement, backgroundSize.x, backgroundSize.y, backgroundSize.sw, backgroundSize.sh);
     const originImageData = tempContext.getImageData(0, 0, WIDTH, HEIGHT);
     for (let i = 0; i < WIDTH * HEIGHT; i++) {
-        if (seg_values[i + WIDTH * HEIGHT] * 255 > 10) {
+        if (seg_values[i + WIDTH * HEIGHT] * 255 > 100) {
             tempScaleData.data[i * 4] = originImageData.data[i * 4];
             tempScaleData.data[i * 4 + 1] = originImageData.data[i * 4 + 1];
             tempScaleData.data[i * 4 + 2] = originImageData.data[i * 4 + 2];
@@ -138,7 +145,8 @@ export function drawHumanSeg(
     tempContext.putImageData(tempScaleData, 0, 0);
     canvas.width = inputWidth;
     canvas.height = inputHeight;
-    ctx.drawImage(tempBackgroundCanvas, -backgroundSize.bx, -backgroundSize.by, backgroundSize.bw, backgroundSize.bh);
+    backgroundCanvas
+    && ctx.drawImage(backgroundCanvas, -backgroundSize.bx, -backgroundSize.by, backgroundSize.bw, backgroundSize.bh);
     ctx.drawImage(tempCanvas, -backgroundSize.bx, -backgroundSize.by, backgroundSize.bw, backgroundSize.bh);
 }
 
@@ -184,50 +192,27 @@ export function blurBackground(seg_values: number[], dest_canvas) {
 
 /**
  * draw mask without human
- * @param {HTMLCanvasElement} canvas the dest canvas draws the pixels
  * @param {Array} seg_values seg_values of the input image
- * @param {Object} dark use dark mode
+ * @param {HTMLCanvasElement} dest the dest canvas draws the pixels
+ * @param {HTMLCanvasElement} canvas background canvas
  */
-export function drawMask(seg_values: number[], canvas: HTMLCanvasElement, dark?: boolean) {
-    const inputWidth = inputElement.naturalWidth || inputElement.width;
-    const inputHeight = inputElement.naturalHeight || inputElement.height;
+export function drawMask(seg_values: number[], dest: HTMLCanvasElement, canvas: HTMLCanvasElement) {
     const tempCanvas = document.createElement('canvas') as HTMLCanvasElement;
     const tempContext = tempCanvas.getContext('2d') as CanvasRenderingContext2D;
     tempCanvas.width = WIDTH;
     tempCanvas.height = HEIGHT;
-    canvas.width = inputWidth;
-    canvas.height = inputHeight;
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    const tempScaleData = tempContext.createImageData(WIDTH, HEIGHT);
-    tempContext.drawImage(inputElement, backgroundSize.x, backgroundSize.y, backgroundSize.sw, backgroundSize.sh);
-    const originImageData = tempContext.getImageData(0, 0, WIDTH, HEIGHT);
+    tempContext.drawImage(canvas, 0, 0, WIDTH, HEIGHT);
+    const dest_ctx = dest.getContext('2d') as CanvasRenderingContext2D;
+    dest.width = WIDTH;
+    dest.height = HEIGHT;
 
+    const tempScaleData = tempContext.getImageData(0, 0, WIDTH, HEIGHT);
     for (let i = 0; i < WIDTH * HEIGHT; i++) {
-        if (seg_values[i + WIDTH * HEIGHT] * 255 > 10) {
-            tempScaleData.data[i * 4] = dark ? 0 : originImageData.data[i * 4];
-            tempScaleData.data[i * 4 + 1] = dark ? 0 : originImageData.data[i * 4 + 1];
-            tempScaleData.data[i * 4 + 2] = dark ? 0 : originImageData.data[i * 4 + 2];
-            tempScaleData.data[i * 4 + 3] = seg_values[i + WIDTH * HEIGHT] * 255;
+        if (seg_values[i + WIDTH * HEIGHT] * 255 > 150) {
+            tempScaleData.data[i * 4 + 3] = seg_values[i] * 255;
         }
     }
 
     tempContext.putImageData(tempScaleData, 0, 0);
-    ctx.drawImage(tempCanvas, -backgroundSize.bx, -backgroundSize.by, backgroundSize.bw, backgroundSize.bh);
-}
-
-/**
- * Get scaled background canvas data to adapter target canvas size
- *
- * @param {HTMLCanvasElement} backgroundCanvas the canvas as background
- * @param {Number} targetWidth target canvas width
- * @param {Number} targetHeight target canvas height
- * @returns {Object}
- */
-function getScaledBackgroundCanvas(backgroundCanvas, targetWidth, targetHeight) {
-    const tempBackgroundCanvas = document.createElement('canvas') as HTMLCanvasElement;
-    const tempBackgroundContext = tempBackgroundCanvas.getContext('2d') as CanvasRenderingContext2D;
-    tempBackgroundCanvas.width = targetWidth;
-    tempBackgroundCanvas.height = targetHeight;
-    tempBackgroundContext.drawImage(backgroundCanvas, 0, 0, targetWidth, targetHeight);
-    return tempBackgroundCanvas;
+    dest_ctx.drawImage(tempCanvas, 0, 0, WIDTH, HEIGHT);
 }

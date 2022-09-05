@@ -3,143 +3,52 @@
  * @author yueshuangyan
  */
 
-function getValueFromTensorPosNoLimit(textureName: string, { channel, height_shape, width_texture, height_texture }) {
-    return `
-    // 根据tensor坐标获取这个tensor位置的值
-    float getValueFromTensorPos_${textureName}(int r, int g, int b, int a) {
-        vec4 pixels = TEXTURE2D(texture_${textureName},
-            vec2(
-                (float(a * ${channel} + g) + 0.5) / float(${width_texture}),
-                (float(r * ${height_shape} + b) + 0.5) / float(${height_texture})
-            )
-        );
-        // 只用了r通道
-        return pixels.r;
-    }`;
-}
-
-function getValueFromTensorPosPackingNoLimit(
-    textureName: string,
-    { channel, height_shape, width_texture, height_texture }
-) {
-    return `
-    // 根据tensor坐标获取这个tensor位置的值
-    vec4 getValueFromTensorPosPacking_${textureName}(int r, int g, int b, int a) {
-        vec4 pixels = TEXTURE2D(texture_${textureName},
-            vec2(
-                (float(a * ${channel} + g) + 0.5) / float(${width_texture}),
-                (float(r * ${height_shape} + b) + 0.5) / float(${height_texture})
-            )
-        );
-        return pixels;
-    }`;
-}
-
-
-
-function getValueFromTensorPosLimit(
+// 根据tensor坐标获取对应纹理位置的pixel.r，返回值为 R 通道值
+export function getValueFromTensorPos(
     textureName: string,
     { width_shape, height_shape, channel, width_texture, height_texture }
 ) {
+    const chw = width_shape * height_shape * channel;
+    const hw = width_shape * height_shape;
     return `
-    // 超限布局根据tensor坐标获取这个tensor位置的值
-    float getValueFromTensorPos_${textureName}(int r, int g, int b, int a) {
-        float pieceW = ceil(float(${width_shape}) / 4.0);
-        int x = int(mod(float(a), pieceW));
-        int offsetY = 0;
-
-        if ((float(a) / pieceW) >= 3.0) {
-            offsetY = 3 * ${height_shape};
-        }
-        else if (float(a) / pieceW >= 2.0) {
-            offsetY = 2 * ${height_shape};
-        }
-        else if (float(a) >= pieceW) {
-            offsetY = ${height_shape};
-        }
+    float getValueFromTensorPos_${textureName}(int n, int c, int h, int w) {
+        int index = n * ${chw} + c * ${hw} + h * ${width_shape} + w;
+        // 0.01 hack: 在 PC/WISE 机器上，出现某个值（比如 index 为 3520） float(index) 和 float(3520) 返回值不同的情况，目前 +0.01 hack
+        int pos_w = int(mod(float(index) + 0.01, float(${width_texture})));
+        int pos_h = index / int(${width_texture});
         vec4 pixels = TEXTURE2D(texture_${textureName},
             vec2(
-                (float(x * ${channel} + g) + 0.5) / float(${width_texture}),
-                (float(r * 4 * ${height_shape} + b + offsetY) + 0.5) / float(${height_texture})
+                (float(pos_w)  + 0.5) / float(${width_texture}),
+                (float(pos_h) + 0.5) / float(${height_texture})
             )
         );
         return pixels.r;
     }`;
 }
 
-function getValueFromTensorPosPackingLimit(
+// 根据tensor坐标获取对应纹理位置的pixel，返回值为四通道值 RGBA
+export function getValueFromTensorPosPacking(
     textureName: string,
-    { width_shape, height_shape, channel, width_texture, height_texture }
+    { channel, height_shape, width_texture, height_texture, width_shape }
 ) {
+    const chw = width_shape * height_shape * channel;
+    const hw = width_shape * height_shape;
     return `
-    // 超限布局根据tensor坐标获取这个tensor位置的值
-    float getValueFromTensorPosPacking_${textureName}(int r, int g, int b, int a) {
-        float pieceW = ceil(float(${width_shape}) / 4.0);
-        int x = int(mod(float(a), pieceW));
-        int offsetY = 0;
-
-        if ((float(a) / pieceW) >= 3.0) {
-            offsetY = 3 * ${height_shape};
-        }
-        else if (float(a) / pieceW >= 2.0) {
-            offsetY = 2 * ${height_shape};
-        }
-        else if (float(a) >= pieceW) {
-            offsetY = ${height_shape};
-        }
+    vec4 getValueFromTensorPosPacking_${textureName}(int n, int c, int h, int w) {
+        int index = n * ${chw} + c * ${hw} + h * ${width_shape} + w;
+        // 0.01 hack: 在 PC/WISE 设备上，出现某个值（比如 index 为 3520） float(index) 和 float(3520) 返回值不同的情况，目前 +0.01 hack
+        int pos_w = int(mod(float(index) + 0.01, float(${width_texture})));
+        int pos_h = index / int(${width_texture});
         vec4 pixels = TEXTURE2D(texture_${textureName},
             vec2(
-                (float(x * ${channel} + g) + 0.5) / float(${width_texture}),
-                (float(r * 4 * ${height_shape} + b + offsetY) + 0.5) / float(${height_texture})
+                (float(pos_w)  + 0.5) / float(${width_texture}),
+                (float(pos_h) + 0.5) / float(${height_texture})
             )
         );
         return pixels;
     }`;
 }
 
-export function getValueFromTensorPos(textureName: string, textureParams) {
-    return textureParams.limit
-        ? getValueFromTensorPosLimit(textureName, textureParams)
-        : getValueFromTensorPosNoLimit(textureName, textureParams);
-}
-
-export function getValueFromTensorPosPacking(textureName: string, textureParams) {
-    return textureParams.limit
-        ? getValueFromTensorPosPackingLimit(textureName, textureParams)
-        : getValueFromTensorPosPackingNoLimit(textureName, textureParams);
-
-}
-
-export function getValueFromTensorPosPacked(
-    textureName: string,
-    { offset_y, height_shape, width_texture, height_texture }
-) {
-    return `
-    // 超限布局根据tensor坐标获取这个tensor位置的值
-    float getValueFromTensorPosPacked_${textureName}(int r, int g, int b, int a) {
-        int y = b / 2;
-        int yOffset = int(mod(float(b), 2.0));
-        int x = a / 2;
-        int xOffset = int(mod(float(a), 2.0));
-        int height = ${height_shape} + ${offset_y};
-        vec4 pixels = TEXTURE2D(
-            texture_${textureName},
-            vec2((float(x) + 0.5) / float(${width_texture}),
-            (float(g * height / 2 + y) + 0.5) / float(${height_texture}))
-        );
-        int index = 0;
-        if (xOffset == 0 && yOffset == 0) {
-            return pixels[0];
-        }
-        else if (xOffset == 1 && yOffset == 0) {
-            return pixels[1];
-        }
-        else if (xOffset == 0 && yOffset == 1) {
-            return pixels[2];
-        }
-        return pixels[3];
-    }`;
-}
 
 export function getTensorPosFromArrayIndex(
     textureName: string,
@@ -151,21 +60,25 @@ export function getTensorPosFromArrayIndex(
     if (length_shape === 1) {
         return `
             int getTensorPosFromArrayIndex_${textureName}(int n) {
-                return int(mod(float(n), float(${numbers_shape[0]})));
+                return calMod(n, ${numbers_shape[0]});
             }
         `;
     }
 
     const shapeVec = `ivec${length_shape}(${numbers_shape.join(', ')})`;
+
+    let posStr = `pos[0] = n / ${numbers_shape[0]};`;
+    for (let i = 1; i < length_shape; i++) {
+        posStr += `
+            n = calMod(n, ${numbers_shape[i - 1]});
+            pos[${i}] = calDivision(n, ${numbers_shape[i]});
+        `;
+    }
     return `
     ivec${length_shape} shapeVec_${textureName} = ${shapeVec};
     ivec${length_shape} getTensorPosFromArrayIndex_${textureName}(int n) {
         ivec${length_shape} pos;
-        pos[0] = n / shapeVec_${textureName}[0];
-        for (int i = 1; i < ${length_shape}; i++) {
-            n = int(mod(float(n), float(shapeVec_${textureName}[i - 1])));
-            pos[i] = n / shapeVec_${textureName}[i];
-        }
+        ${posStr}
         return pos;
     }
     `;

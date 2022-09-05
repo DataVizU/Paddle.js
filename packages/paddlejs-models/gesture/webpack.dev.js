@@ -9,7 +9,7 @@ module.exports = {
     devtool: 'inline-source-map',
     devServer: {
         host: '0.0.0.0',
-        port: 8866
+        port: 8865
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -31,7 +31,7 @@ module.exports = {
             },
             {
                 test: /\.txt$/,
-                loader: 'raw-​loader',
+                loader: 'raw-loader',
                 exclude: /node_modules/
             }
         ]

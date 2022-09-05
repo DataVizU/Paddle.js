@@ -3,18 +3,23 @@
  */
 
 function mainFunc(
-    { origin, filter, out },
+    { origin, filter, out, bias },
     {
         groups = 1,
         strides = [],
         paddings = [],
         dilations = [],
-        fuse_relu
+        fuse_relu,
+        act_type,
+        hard_swish_offset = 3.0,
+        hard_swish_scale = 6.0,
+        hard_swish_threshold = 6.0
     }
 ) {
     const [stride_v = 1, stride_h = 1] = strides;
     const [padTop = 0, padLeft = 0] = paddings;
     const [dilation_v = 1, dilation_h = 1] = dilations;
+
     return `
     void main() {
         ivec4 oPos = getOutputTensorPos();
@@ -74,13 +79,21 @@ function mainFunc(
             oy += ${dilation_v};
         }
 
-        res += getValueFromTensorPosPacking_bias(0, c, 0, 0);
+        ${bias ? 'res += getValueFromTensorPosPacking_bias(0, c, 0, 0);' : ''}
+
         if (${fuse_relu}) {
-            res.r = max(0.0, res.r);
-            res.g = max(0.0, res.g);
-            res.b = max(0.0, res.b);
-            res.a = max(0.0, res.a);
+            res = max(vec4(0.0, 0.0, 0.0, 0.0), res);
         }
+        else if (${act_type === 'relu6'}) {
+            res = min(max(vec4(0.0, 0.0, 0.0, 0.0), res), vec4(6.0, 6.0, 6.0, 6.0));
+        }
+        else if (${act_type === 'hard_swish'}) {
+            res = res * min(
+                max(vec4(0.0, 0.0, 0.0, 0.0), res + vec4(${hard_swish_offset})),
+                vec4(${hard_swish_threshold})
+            ) / vec4(${hard_swish_scale});
+        }
+
         setPackedOutput(res);
     }
     `;
@@ -88,12 +101,6 @@ function mainFunc(
 
 export default {
     mainFunc,
-    params: [
-        'strides',
-        'paddings',
-        'dilations',
-        'groups'
-    ],
     textureFuncConf: {
         filter: ['getValueFromTensorPosPacking'],
         origin: ['getValueFromTensorPosPacking'],

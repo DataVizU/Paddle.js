@@ -8,11 +8,14 @@ function mainFunc(
 ) {
     const [stride_v = 1, stride_h = 1] = strides;
     const [padTop = 0, padLeft = 0] = paddings;
-    const [ksize_x, ksize_y] = ksize;
+    const [ksize_y, ksize_x] = ksize;
     return `
     // start函数
     void main(void) {
         float res = 0.0;
+        if (${pooling_type} == 1) {
+            res = -1.70141184e38;
+        }
         // 获取output的坐标
         ivec4 out_pos = getOutputTensorPos();
         // X、Y方向的移动步长
@@ -57,18 +60,14 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'strides',
-        'paddings',
-        'pooling_type',
-        'ksize'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
     },
     behaviors: [
+        'isAdaptiveAvg',
         'isMax',
         'setPacked',
+        'setAdaptive',
         'isGlobalPooling'
     ]
 };

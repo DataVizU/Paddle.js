@@ -2,7 +2,7 @@
  * @file OpExecutor，封装算子可执行单元
  */
 
-import { ModelOp, OpInputs, OpOutputs, OpAttrs, OpData } from '../commons/interface';
+import { ModelOp, OpInputs, OpOutputs, OpAttrs, OpData, BufferType, OpUniform } from '../commons/interface';
 import { GLOBALS } from '../globals';
 
 export default class OpExecutor {
@@ -12,17 +12,21 @@ export default class OpExecutor {
     outputs: OpOutputs = {} as OpOutputs;
     attrs: OpAttrs = {} as OpAttrs;
     subAttrs: OpAttrs[] = [] as OpAttrs[];
-    next: string | null = null;
+    next: string = '';
     opData: OpData = null;
     isPacked: boolean = false;
-    finish: boolean = false;
+    bufferType: BufferType = BufferType.FrameBuffer;
+    uniform: OpUniform| null = null;
 
-    constructor(op: ModelOp, idx: number, isPacked: boolean | undefined = false) {
+    constructor(op: ModelOp, idx: number) {
         const {
             inputs,
             outputs,
             attrs = {},
-            type
+            type,
+            isPacked = false,
+            bufferType = BufferType.FrameBuffer,
+            uniform = null
         } = op;
 
         this.id = `${type}_${+new Date()}_${idx}`;
@@ -30,12 +34,12 @@ export default class OpExecutor {
         this.outputs = outputs;
         this.attrs = attrs;
         this.subAttrs = op['sub-attrs'] || [];
+        this.uniform = uniform;
         this.type = type;
-        this.isPacked = isPacked || false;
-        this.finish = false;
-        this.next = null;
+        this.isPacked = isPacked;
+        this.bufferType = bufferType;
+        this.next = '';
         this.opData = null;
-        this.isPacked = false;
     }
 
     get inputsName() {

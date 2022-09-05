@@ -16,7 +16,7 @@ function mainFunc(
         float o = 0.0;
         o = getValueFromTensorPos_origin(oPos.r, oPos.g, oPos.b, oPos.a);
         if (${dropout_implementation === 'downgrade_in_infer'}) {
-            o = o * (1.0 - ${dropout_prob});
+            o = o * (1.0 - float(${dropout_prob}));
         }
         setOutput(float(o));
     }
@@ -24,14 +24,7 @@ function mainFunc(
 }
 export default {
     mainFunc,
-    params: [
-        'dropout_implementation',
-        'dropout_prob'
-    ],
     textureFuncConf: {
         origin: ['getValueFromTensorPos']
-    },
-    behaviors: [
-        'normalizeDim'
-    ]
+    }
 };

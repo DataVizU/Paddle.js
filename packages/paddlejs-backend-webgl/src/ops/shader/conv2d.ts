@@ -4,7 +4,7 @@
 
 /* eslint-disable max-lines-per-function */
 function mainFunc(
-    { origin, filter, out },
+    { origin, filter, out, bias },
     {
         groups = 1,
         strides = [],
@@ -12,12 +12,26 @@ function mainFunc(
         dilations = [],
         fuse_relu,
         filter_nearest_vec4,
-        filter_remainder_vec4
+        filter_remainder_vec4,
+        act_type = '',
+        padding_algorithm = '',
+        hard_swish_offset = 3.0,
+        hard_swish_scale = 6.0,
+        hard_swish_threshold = 6.0
     }
 ) {
     const [stride_v = 1, stride_h = 1] = strides;
-    const [padTop = 0, padLeft = 0] = paddings;
+    let [padTop = 0, padLeft = 0] = paddings;
     const [dilation_v = 1, dilation_h = 1] = dilations;
+
+    function calcPadding() {
+        if (padding_algorithm === 'SAME'
+            && ((Math.ceil((origin.width_shape - filter.width_shape) / stride_v) + 1) !== out.width_shape)) {
+            padTop = 1;
+            padLeft = 1;
+        }
+    }
+    calcPadding();
     return `
     // start函数
     void main(void) {
@@ -100,10 +114,19 @@ function mainFunc(
             oy += ${dilation_v};
         }
 
-        float bi = getValueFromTensorPos_bias(0, 0, 0, c);
-        res += bi;
+        ${bias ? 'res += getValueFromTensorPos_bias(0, 0, 0, c);' : ''}
+
         if (${fuse_relu}) {
             res = max(0.0, res);
+        }
+        else if (${act_type === 'relu6'}) {
+            res = min(max(0.0, res), 6.0);
+        }
+        else if (${act_type === 'hard_swish'}) {
+            res = res * min(
+                max(0.0, res + float(${hard_swish_offset})),
+                float(${hard_swish_threshold})
+            ) / float(${hard_swish_scale});
         }
 
         setOutput(res);
@@ -113,14 +136,6 @@ function mainFunc(
 
 export default {
     mainFunc,
-    params: [
-        'strides',
-        'paddings',
-        'dilations',
-        'groups',
-        'filter_nearest_vec4',
-        'filter_remainder_vec4'
-    ],
     textureFuncConf: {
         filter: ['getValueFromTensorPos'],
         origin: ['getValueFromTensorPos'],

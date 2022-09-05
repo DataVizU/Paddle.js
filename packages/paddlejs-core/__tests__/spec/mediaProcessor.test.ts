@@ -1,5 +1,6 @@
 import base64Img from 'base64-img';
 import MediaProcessor from '../../src/mediaProcessor';
+import '../../src/globals';
 
 const path = require('path');
 const { Image, createCanvas } = require('canvas');
@@ -46,8 +47,8 @@ describe('test mediaProcessor with scale and targetSize', () => {
 
 
     test('test api process', () => {
-        const data = processror.process(img, mediaParams);
-        expect(data).toEqual([{ data: [], shape: [1, 3, 224, 224], name: 'image' }]);
+        const data = processror.process(img, mediaParams, { fw: 224, fh: 224 });
+        expect(data).toEqual([{ data: [], shape: [1, 3, 224, 224], name: 'image', persistable: true }]);
     });
 });
 
