@@ -1,40 +1,80 @@
 <template>
+  <el-dialog
+    v-model="isLoadingModel"
+    title="提示"
+    width="30%"
+    center
+    :lock-scroll="true"
+    :show-close="false"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+  >
+    <span>正在加载模型，请稍等。</span>
+  </el-dialog>
   <el-row :gutter="20">
-    <el-col :span="8">
+    <el-col :span="10">
       <el-row class="small-title">
         <h2>上传文本图片</h2>
       </el-row>
       <el-row>
-        <input type="file" @change="uploadImg" />
+        <el-input type="file" v-model="fileName" @change="uploadImg"></el-input>
       </el-row>
       <el-row>
-        <img id="raw-img" />
+        <img id="raw-img" class="show-area"/>
+      </el-row>
+    </el-col>
+    <el-col :span="10">
+      <el-row class="small-title">
+        <h2>文字区域检测</h2>
       </el-row>
       <el-row></el-row>
+      <el-row>
+        <canvas id="canvas" class="show-area"></canvas>
+      </el-row>
     </el-col>
-    <el-col :span="8">
-      <div>3</div>
-    </el-col>
-    <el-col :span="8">
+    <el-col :span="4">
       <div>1</div>
     </el-col>
   </el-row>
 </template>
 
 <script setup lang="ts">
-const uploadImg = (e: Event) => {
+import * as ocr from "@paddlejs-models/ocr";
+
+import { onMounted, ref } from "vue";
+
+const fileName = ref(null);
+
+const canvas = ref(null as unknown as HTMLCanvasElement);
+
+const isLoadingModel = ref(true);
+
+onMounted(async () => {
+  canvas.value = document.getElementById("canvas") as HTMLCanvasElement;
+  console.log(canvas);
+
+  await ocr.init();
+  isLoadingModel.value = false;
+});
+
+const uploadImg = () => {
+  /**
+   * 这里由于操作是绑定在 el-input 上；因此需要在内部重新获取 input 再拿到 file
+   */
   const reader = new FileReader();
   const rawImg = document.getElementById("raw-img") as HTMLImageElement;
+  const inputElement = document
+    .getElementsByClassName("el-input")[0]
+    .getElementsByTagName("input")[0];
 
   try {
-    const file = (e!.target as HTMLInputElement).files![0];
+    const file = inputElement.files![0];
     reader.onload = () => {
       rawImg.src = URL.createObjectURL(file);
-      console.log(e);
     };
     reader.readAsDataURL(file);
-  } catch (e) {
-    console.error(e);
+  } catch (err) {
+    console.error(err);
   }
 };
 </script>
@@ -44,7 +84,12 @@ const uploadImg = (e: Event) => {
   justify-content: space-between;
   align-items: center;
 }
-img {
+
+.show-area {
   width: 100%;
+}
+
+.el-row {
+  margin-bottom: 20px;
 }
 </style>
