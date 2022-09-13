@@ -10,6 +10,7 @@
 7. conventional-changelog-cli 生成changelog
 8. husky 代码上传维护
 9. yalc 本地打包测试
+10. pnpm 支持monorepo
 
 ## 实现效果
 
@@ -21,3 +22,8 @@
 6. 基于 husky 实现代码上传前代码格式验证以及commit格式校验
 7. 基于 yalc 实现本地打包开发测试
 8. publish 前可以自动进行代码风格校验和修复，代码测试，代码打包，changelog生成
+9. pnpm支持monorepo
+
+## 开发
+
+package管理全部使用pnpm；同时需要全局安装yalc。[yalc参考资料](https://zhuanlan.zhihu.com/p/469010320)
