@@ -20,7 +20,7 @@
         <el-input type="file" v-model="fileName" @change="uploadImg"></el-input>
       </el-row>
       <el-row>
-        <img id="raw-img" class="show-area"/>
+        <img id="raw-img" class="show-area" />
       </el-row>
     </el-col>
     <el-col :span="10">
@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import * as ocr from "@paddlejs-models/ocr";
+import * as ocr from "paddlejs-ocr";
 
 import { onMounted, ref } from "vue";
 
