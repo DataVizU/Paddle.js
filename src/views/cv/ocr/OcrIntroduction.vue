@@ -1,6 +1,6 @@
 <template>
-  <el-row>
-    <el-col :span="3">
+  <el-row :gutter="20">
+    <el-col :span="8">
       <el-card
         :body-style="{ padding: '0px' }"
         @click="routerJump('/text-rec')"
