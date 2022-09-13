@@ -1,4 +1,0 @@
-**/*.d.ts
-node_modules
-packages/paddlejs-enc/**/*
-packages/paddlejs-mediapipe/opencv/**/*
