@@ -39,7 +39,7 @@ const rollupConfig: RollupOptions = {
     // plugins 需要注意引用顺序
     plugins: [
         eslint({
-            throwOnError: false, // lint 结果有错误将会抛出异常；这里暂时将级别调低
+            throwOnError: true,
             throwOnWarning: false,
             include: ['src/**/*.ts'],
             exclude: ['node_modules/**', 'lib/**', '*.js'],

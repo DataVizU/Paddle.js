@@ -9,14 +9,19 @@ import {
   ExtractorConfig,
   ExtractorResult,
 } from '@microsoft/api-extractor'
+/**
+ * 这里是由于 'conventional-changelog' 未提供类型文件
+ */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import conventionalChangelog from 'conventional-changelog'
 
 interface TaskFunc {
+    // eslint-disable-next-line @typescript-eslint/ban-types
     (cb: Function): void
 }
 
-const CHANGE_TRACE = ['ocr', 'release', 'paddlejs-models']
+const CHANGE_TRACE = ['paddlejs-models/ocr']
 
 /**
  * 删除 lib 文件
