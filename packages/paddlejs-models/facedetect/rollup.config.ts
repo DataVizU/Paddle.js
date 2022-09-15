@@ -1,6 +1,5 @@
 import path from 'path'
 import { RollupOptions } from 'rollup'
-import { string } from "rollup-plugin-string";
 import rollupTypescript from 'rollup-plugin-typescript2'
 import babel from 'rollup-plugin-babel'
 import resolve from 'rollup-plugin-node-resolve'
@@ -45,10 +44,6 @@ const rollupConfig: RollupOptions = {
             exclude: ['node_modules/**', 'lib/**', '*.js'],
         }),
 
-        // 处理txt文件
-        string({
-            include: "src/ppocr_keys_v1.txt"
-        }),
         // 使得 rollup 支持 commonjs 规范，识别 commonjs 规范的依赖
         commonjs(),
 

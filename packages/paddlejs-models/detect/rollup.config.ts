@@ -45,10 +45,6 @@ const rollupConfig: RollupOptions = {
             exclude: ['node_modules/**', 'lib/**', '*.js'],
         }),
 
-        // 处理txt文件
-        string({
-            include: "src/ppocr_keys_v1.txt"
-        }),
         // 使得 rollup 支持 commonjs 规范，识别 commonjs 规范的依赖
         commonjs(),
 
