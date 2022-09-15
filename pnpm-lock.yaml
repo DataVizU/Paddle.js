@@ -198,6 +198,93 @@ importers:
       vinyl-buffer: 1.0.1
       vinyl-source-stream: 2.0.0
 
+  packages/paddlejs-models/gesture:
+    specifiers:
+      '@babel/core': ^7.19.0
+      '@babel/preset-env': ^7.19.0
+      '@commitlint/cli': ^17.1.2
+      '@commitlint/config-conventional': ^17.1.0
+      '@microsoft/api-extractor': ^7.30.0
+      '@paddlejs/paddlejs-backend-webgl': ^1.2.9
+      '@paddlejs/paddlejs-core': ^2.2.0
+      '@types/d3-polygon': ^3.0.0
+      '@types/fs-extra': ^9.0.13
+      '@types/gulp': ^4.0.9
+      '@types/jest': ^29.0.1
+      '@types/node': ^18.7.16
+      '@typescript-eslint/eslint-plugin': ^5.36.2
+      '@typescript-eslint/parser': ^5.36.2
+      browserify: ^17.0.0
+      chalk: 4.1.2
+      commitlint: ^17.1.2
+      conventional-changelog-cli: ^2.2.2
+      eslint: 8.22.0
+      eslint-plugin-jest: ^27.0.4
+      fs-extra: ^10.1.0
+      gulp: ^4.0.2
+      gulp-clean: ^0.4.0
+      gulp-typescript: 6.0.0-alpha.1
+      gulp-uglify: ^3.0.2
+      husky: ^8.0.1
+      jest: ^29.0.3
+      lint-staged: ^13.0.3
+      rollup: ^2.79.0
+      rollup-plugin-babel: ^4.4.0
+      rollup-plugin-commonjs: ^10.1.0
+      rollup-plugin-eslint: ^7.0.0
+      rollup-plugin-node-resolve: ^5.2.0
+      rollup-plugin-string: ^3.0.0
+      rollup-plugin-typescript2: ^0.34.0
+      ts-jest: ^29.0.0
+      ts-node: ^10.9.1
+      tsify: ^5.0.4
+      typescript: ^4.8.3
+      vinyl-buffer: ^1.0.1
+      vinyl-source-stream: ^2.0.0
+    dependencies:
+      '@paddlejs/paddlejs-backend-webgl': 1.2.9
+      '@paddlejs/paddlejs-core': 2.2.0
+    devDependencies:
+      '@babel/core': 7.19.0
+      '@babel/preset-env': 7.19.0_@babel+core@7.19.0
+      '@commitlint/cli': 17.1.2
+      '@commitlint/config-conventional': 17.1.0
+      '@microsoft/api-extractor': 7.31.0
+      '@types/d3-polygon': 3.0.0
+      '@types/fs-extra': 9.0.13
+      '@types/gulp': 4.0.9
+      '@types/jest': 29.0.2
+      '@types/node': 18.7.18
+      '@typescript-eslint/eslint-plugin': 5.37.0_go2bhpxwaowc6dbfc3w7x3jkye
+      '@typescript-eslint/parser': 5.37.0_76twfck5d7crjqrmw4yltga7zm
+      browserify: 17.0.0
+      chalk: 4.1.2
+      commitlint: 17.1.2
+      conventional-changelog-cli: 2.2.2
+      eslint: 8.22.0
+      eslint-plugin-jest: 27.0.4_6qy6l7h5qjhy66mhrt4lw3wrxy
+      fs-extra: 10.1.0
+      gulp: 4.0.2
+      gulp-clean: 0.4.0
+      gulp-typescript: 6.0.0-alpha.1_typescript@4.8.3
+      gulp-uglify: 3.0.2
+      husky: 8.0.1
+      jest: 29.0.3_sgupjgtkb76w4hsvieap2xky7i
+      lint-staged: 13.0.3
+      rollup: 2.79.0
+      rollup-plugin-babel: 4.4.0_b6woseefyuugm6lsnk4tw7iz2e
+      rollup-plugin-commonjs: 10.1.0_rollup@2.79.0
+      rollup-plugin-eslint: 7.0.0
+      rollup-plugin-node-resolve: 5.2.0_rollup@2.79.0
+      rollup-plugin-string: 3.0.0
+      rollup-plugin-typescript2: 0.34.0_ihkqvyh37tzxtjmovjyy2yrv7m
+      ts-jest: 29.0.1_on4dqcho5ngwz3ibqrowkmecea
+      ts-node: 10.9.1_bidgzm5cq2du6gnjtweqqjrrn4
+      tsify: 5.0.4_nqawqrm2u5w6akvyecz7kgercy
+      typescript: 4.8.3
+      vinyl-buffer: 1.0.1
+      vinyl-source-stream: 2.0.0
+
   packages/paddlejs-models/ocr:
     specifiers:
       '@babel/core': ^7.19.0
