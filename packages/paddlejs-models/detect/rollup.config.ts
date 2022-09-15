@@ -1,6 +1,5 @@
 import path from 'path'
 import { RollupOptions } from 'rollup'
-import { string } from "rollup-plugin-string";
 import rollupTypescript from 'rollup-plugin-typescript2'
 import babel from 'rollup-plugin-babel'
 import resolve from 'rollup-plugin-node-resolve'
