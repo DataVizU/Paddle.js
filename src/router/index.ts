@@ -3,6 +3,7 @@ import HomeView from "../views/HomeView.vue";
 import OcrView from "../views/cv/ocr/OcrView.vue";
 import OcrIntroduction from "../views/cv/ocr/OcrIntroduction.vue";
 import TextRecognition from "../views/cv/ocr/TextRecognition/TextRecognition.vue";
+import TextDetection from "../views/cv/ocr/TextDetection/TextDetection.vue";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -34,6 +35,11 @@ const router = createRouter({
           path: "/text-rec",
           name: "text-rec",
           component: TextRecognition,
+        },
+        {
+          path: "/text-det",
+          name: "text-det",
+          component: TextDetection,
         },
       ],
     },
