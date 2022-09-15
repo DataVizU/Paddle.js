@@ -12,7 +12,7 @@
     <span>正在加载模型，请稍等。</span>
   </el-dialog>
   <el-row :gutter="20">
-    <el-col :span="12">
+    <el-col :span="8">
       <el-row class="small-title">
         <h2>上传文本图片</h2>
       </el-row>
@@ -26,33 +26,47 @@
         <img id="raw-img" style="display: none" />
       </el-row>
     </el-col>
-    <el-col :span="12">
+    <el-col :span="8">
       <el-row class="small-title">
         <h2>文字区域检测</h2>
       </el-row>
       <el-row>
-        <el-button type="primary" @click="predict">开始检测</el-button>
+        <el-button type="primary" @click="predict">开始识别</el-button>
       </el-row>
       <el-row>
         <canvas id="canvas" class="show-area"></canvas>
       </el-row>
     </el-col>
+    <el-col :span="8">
+      <el-row class="small-title">
+        <h2>识别结果展示</h2>
+      </el-row>
+      <span v-html="result"></span>
+    </el-col>
   </el-row>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import * as ocr from "@paddlejs-models/ocr";
+import { onMounted, onUnmounted, ref } from "vue";
 
 const fileName = ref(null);
 
 const canvas = ref(null as unknown as HTMLCanvasElement);
+
+const result = ref("");
 
 const isLoadingModel = ref(true);
 
 onMounted(async () => {
   canvas.value = document.getElementById("canvas") as HTMLCanvasElement;
 
+  await ocr.init();
   isLoadingModel.value = false;
+});
+
+onUnmounted(() => {
+  console.log('delete rec')
 });
 
 const uploadImg = () => {
@@ -82,8 +96,26 @@ const uploadImg = () => {
 
 const predict = async () => {
   const img = document.getElementById("raw-img") as HTMLImageElement;
-  console.log(img);
+  const res = await ocr.recognize(img, { canvas: canvas.value });
+  console.log(res);
+  if (res.text?.length) {
+    // 页面展示识别内容
+    result.value = res.text.reduce((total, cur) => total + `<p>${cur}</p>`);
+  }
 };
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+.small-title {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.show-area {
+  width: 100%;
+}
+
+.el-row {
+  margin-bottom: 20px;
+}
+</style>

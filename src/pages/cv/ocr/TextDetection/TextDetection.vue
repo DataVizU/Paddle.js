@@ -12,7 +12,7 @@
     <span>正在加载模型，请稍等。</span>
   </el-dialog>
   <el-row :gutter="20">
-    <el-col :span="8">
+    <el-col :span="12">
       <el-row class="small-title">
         <h2>上传文本图片</h2>
       </el-row>
@@ -26,43 +26,33 @@
         <img id="raw-img" style="display: none" />
       </el-row>
     </el-col>
-    <el-col :span="8">
+    <el-col :span="12">
       <el-row class="small-title">
         <h2>文字区域检测</h2>
       </el-row>
       <el-row>
-        <el-button type="primary" @click="predict">开始识别</el-button>
+        <el-button type="primary" @click="predict">开始检测</el-button>
       </el-row>
       <el-row>
         <canvas id="canvas" class="show-area"></canvas>
       </el-row>
     </el-col>
-    <el-col :span="8">
-      <el-row class="small-title">
-        <h2>识别结果展示</h2>
-      </el-row>
-      <span v-html="result"></span>
-    </el-col>
   </el-row>
 </template>
 
 <script setup lang="ts">
-import * as ocr from "paddlejs-ocr";
-
+import * as ocrDet from "@paddlejs-models/ocrdet";
 import { onMounted, ref } from "vue";
 
 const fileName = ref(null);
 
 const canvas = ref(null as unknown as HTMLCanvasElement);
 
-const result = ref("");
-
 const isLoadingModel = ref(true);
 
 onMounted(async () => {
   canvas.value = document.getElementById("canvas") as HTMLCanvasElement;
-
-  await ocr.init();
+  await ocrDet.load();
   isLoadingModel.value = false;
 });
 
@@ -93,12 +83,30 @@ const uploadImg = () => {
 
 const predict = async () => {
   const img = document.getElementById("raw-img") as HTMLImageElement;
-  const res = await ocr.recognize(img, { canvas: canvas.value });
+  const res = await ocrDet.detect(img);
   console.log(res);
-  if (res.text?.length) {
-    // 页面展示识别内容
-    result.value = res.text.reduce((total, cur) => total + `<p>${cur}</p>`);
-  }
+  drawBox(res);
+};
+
+const drawBox = (points: number[][][]) => {
+  const img = document.getElementById("raw-img") as HTMLImageElement;
+  canvas.value.width = img.naturalWidth;
+  canvas.value.height = img.naturalHeight;
+  const ctx = canvas.value.getContext("2d") as CanvasRenderingContext2D;
+  ctx.drawImage(img, 0, 0, canvas.value.width, canvas.value.height);
+  points.forEach((point) => {
+    // 开始一个新的绘制路径
+    ctx.beginPath();
+    // 设置线条颜色为蓝色
+    ctx.strokeStyle = "blue";
+    // 设置路径起点坐标
+    ctx.moveTo(point[0][0], point[0][1]);
+    ctx.lineTo(point[1][0], point[1][1]);
+    ctx.lineTo(point[2][0], point[2][1]);
+    ctx.lineTo(point[3][0], point[3][1]);
+    ctx.closePath();
+    ctx.stroke();
+  });
 };
 </script>
 

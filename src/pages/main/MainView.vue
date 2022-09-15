@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import MenuView from "@/views/MenuView.vue";
+import MenuView from "@/pages/main/MenuView.vue";
 </script>
 
 <style scoped lang="less">

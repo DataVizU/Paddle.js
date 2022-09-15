@@ -1,5 +1,5 @@
-import router from "@/router";
+// import router from "@/router";
 
 export function routerJump(target: string) {
-  router.push(target);
+  // router.push(target);
 }
