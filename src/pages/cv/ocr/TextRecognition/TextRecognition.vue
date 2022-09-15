@@ -66,7 +66,7 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
-  console.log('delete rec')
+  console.log("delete rec");
 });
 
 const uploadImg = () => {
