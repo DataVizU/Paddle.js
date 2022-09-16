@@ -50,7 +50,7 @@ export async function load() {
     return await Promise.all([detectInit, recInit]);
 }
 
-export async function classify(image) {
+export async function classify(image): Promise<{ box: string | number[][], type: string }> {
     canvas.getContext('2d')!.drawImage(image, 0, 0, detFeedShape, detFeedShape);
     const res = await detectRunner.predict(image);
     const post = new DetectProcess(res, canvas);
