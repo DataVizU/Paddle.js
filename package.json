@@ -10,7 +10,12 @@
   "author": "",
   "license": "ISC",
   "scripts": {
+    "dev:@paddlejs-models/detect": "pnpm -F @paddlejs-models/detect dev",
+    "dev:@paddlejs-models/facedetect": "pnpm -F @paddlejs-models/facedetect dev",
+    "dev:@paddlejs-models/ocrdet": "pnpm -F @paddlejs-models/ocrdet dev",
+    "dev:@paddlejs-models/ocr": "pnpm -F @paddlejs-models/ocr dev",
     "build:@paddlejs-models/detect": "pnpm -F @paddlejs-models/detect build",
+    "build:@paddlejs-models/facedetect": "pnpm -F @paddlejs-models/facedetect build",
     "build:@paddlejs-models/ocrdet": "pnpm -F @paddlejs-models/ocrdet build",
     "build:@paddlejs-models/ocr": "pnpm -F @paddlejs-models/ocr build",
     "lint": "eslint --ext .js,.ts packages --fix",
