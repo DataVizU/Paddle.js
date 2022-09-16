@@ -33,6 +33,10 @@ export default defineConfig({
           __dirname,
           "cv/detection/ScrewDetection/index.html"
         ),
+        facedet: path.resolve(
+          __dirname,
+          "cv/detection/FaceDetection/index.html"
+        ),
       },
       output: {
         chunkFileNames: "static/js/[name]-[hash].js",

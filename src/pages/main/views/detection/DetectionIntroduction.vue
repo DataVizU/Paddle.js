@@ -13,6 +13,19 @@
         </div>
       </el-card>
     </el-col>
+    <!--  face-det  -->
+    <el-col :span="8">
+      <el-card
+        :body-style="{ padding: '0px' }"
+        @click="openWindow('cv/detection/FaceDetection/index.html')"
+      >
+        <img src="../../img/facedet.png" class="image" />
+        <div style="padding: 14px">
+          <h2>人脸检测</h2>
+          <div>基于检测模型，实现检测人脸。</div>
+        </div>
+      </el-card>
+    </el-col>
   </el-row>
 </template>
 
