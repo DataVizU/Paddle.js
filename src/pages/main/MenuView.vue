@@ -12,7 +12,7 @@
           <el-menu-item index="seg">
             <span>图像分割</span>
           </el-menu-item>
-          <el-menu-item index="reg">
+          <el-menu-item index="reg" @click="routerJump('/rec')">
             <span>图像识别</span>
           </el-menu-item>
           <el-menu-item index="ocr" @click="routerJump('/ocr')">

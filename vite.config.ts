@@ -37,6 +37,10 @@ export default defineConfig({
           __dirname,
           "cv/detection/FaceDetection/index.html"
         ),
+        gesturerec: path.resolve(
+          __dirname,
+          "cv/recognition/GestureRecognition/index.html"
+        ),
       },
       output: {
         chunkFileNames: "static/js/[name]-[hash].js",

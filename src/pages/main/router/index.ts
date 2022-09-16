@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import DetectionIntroduction from "@/pages/main/views/detection/DetectionIntroduction.vue";
 import OcrIntroduction from "@/pages/main/views/ocr/OcrIntroduction.vue";
+import RecognitionIntroduction from "@/pages/main/views/recognition/RecognitionIntroduction.vue";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -13,6 +14,11 @@ const router = createRouter({
     {
       path: "/det",
       name: "det",
+      component: RecognitionIntroduction,
+    },
+    {
+      path: "/rec",
+      name: "rec",
       component: DetectionIntroduction,
     },
     {
