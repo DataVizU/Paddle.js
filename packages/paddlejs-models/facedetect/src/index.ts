@@ -5,7 +5,7 @@ interface FeedShape {
     fw: number;
     fh: number;
 }
-interface ModelConfig {
+export interface ModelConfig {
     modelPath?: string;
     mean?: number[];
     std?: number[];
@@ -15,7 +15,7 @@ interface NaturalSize {
     naturalWidth: number;
     naturalHeight: number;
 }
-interface TransformData {
+export interface TransformData {
     left: number;
     width: number;
     top: number;
