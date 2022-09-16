@@ -14,10 +14,12 @@
     "dev:@paddlejs-models/facedetect": "pnpm -F @paddlejs-models/facedetect dev",
     "dev:@paddlejs-models/ocrdet": "pnpm -F @paddlejs-models/ocrdet dev",
     "dev:@paddlejs-models/ocr": "pnpm -F @paddlejs-models/ocr dev",
+    "dev:@paddlejs-models/gesture": "pnpm -F @paddlejs-models/gesture dev",
     "build:@paddlejs-models/detect": "pnpm -F @paddlejs-models/detect build",
     "build:@paddlejs-models/facedetect": "pnpm -F @paddlejs-models/facedetect build",
     "build:@paddlejs-models/ocrdet": "pnpm -F @paddlejs-models/ocrdet build",
     "build:@paddlejs-models/ocr": "pnpm -F @paddlejs-models/ocr build",
+    "build:@paddlejs-models/gesture": "pnpm -F @paddlejs-models/gesture build",
     "lint": "eslint --ext .js,.ts packages --fix",
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "husky install"
