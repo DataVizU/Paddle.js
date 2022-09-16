@@ -6,10 +6,13 @@
           <template #title>
             <span>智能视觉（Paddle.js-CV）</span>
           </template>
-          <el-menu-item index="1">
+          <el-menu-item index="det" @click="routerJump('/det')">
+            <span>图像检测</span>
+          </el-menu-item>
+          <el-menu-item index="seg">
             <span>图像分割</span>
           </el-menu-item>
-          <el-menu-item index="2">
+          <el-menu-item index="reg">
             <span>图像识别</span>
           </el-menu-item>
           <el-menu-item index="ocr" @click="routerJump('/ocr')">
@@ -22,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { routerJump } from "@/utils/routerJump";
+import { routerJump } from "@/pages/main/utools/routerJump";
 
 const handleOpen = (key: string, keyPath: string[]) => {
   console.log(key, keyPath);

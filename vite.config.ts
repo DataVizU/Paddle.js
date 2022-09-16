@@ -29,6 +29,10 @@ export default defineConfig({
         entry: path.resolve(__dirname, "main/index.html"),
         ocrdet: path.resolve(__dirname, "cv/ocr/TextDetection/index.html"),
         ocr: path.resolve(__dirname, "cv/ocr/TextRecognition/index.html"),
+        screwdet: path.resolve(
+          __dirname,
+          "cv/detection/ScrewDetection/index.html"
+        ),
       },
       output: {
         chunkFileNames: "static/js/[name]-[hash].js",

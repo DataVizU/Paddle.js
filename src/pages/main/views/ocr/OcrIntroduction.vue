@@ -4,7 +4,7 @@
     <el-col :span="8">
       <el-card
         :body-style="{ padding: '0px' }"
-        @click="openWindow(domin + 'cv/ocr/TextRecognition/index.html')"
+        @click="openWindow('cv/ocr/TextRecognition/index.html')"
       >
         <img src="../../img/ocr.jpg" class="image" />
         <div style="padding: 14px">
@@ -19,7 +19,7 @@
     <el-col :span="8">
       <el-card
         :body-style="{ padding: '0px' }"
-        @click="openWindow(domin + 'cv/ocr/TextDetection/index.html')"
+        @click="openWindow('cv/ocr/TextDetection/index.html')"
       >
         <img src="../../img/ocrdet.jpg" class="image" />
         <div style="padding: 14px">
@@ -35,14 +35,6 @@
 
 <script setup lang="ts">
 import { openWindow } from "@/utils/openWindow";
-import { ref } from "vue";
-
-const domin = ref(
-  window.document.location.href.slice(
-    0,
-    window.document.location.href.indexOf("main")
-  )
-);
 </script>
 
 <style scoped lang="less">

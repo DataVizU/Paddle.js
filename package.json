@@ -11,6 +11,7 @@
     "postinstall": "husky install"
   },
   "dependencies": {
+    "@paddlejs-models/detect": "file:.yalc/@paddlejs-models/detect",
     "@paddlejs-models/ocr": "file:.yalc/@paddlejs-models/ocr",
     "@paddlejs-models/ocrdet": "file:.yalc/@paddlejs-models/ocrdet",
     "element-plus": "^2.2.16",

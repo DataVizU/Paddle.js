@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router";
+import DetectionIntroduction from "@/pages/main/views/detection/DetectionIntroduction.vue";
 import OcrIntroduction from "@/pages/main/views/ocr/OcrIntroduction.vue";
 
 const router = createRouter({
@@ -8,6 +9,11 @@ const router = createRouter({
       path: "/",
       name: "main",
       component: OcrIntroduction,
+    },
+    {
+      path: "/det",
+      name: "det",
+      component: DetectionIntroduction,
     },
     {
       path: "/ocr",
