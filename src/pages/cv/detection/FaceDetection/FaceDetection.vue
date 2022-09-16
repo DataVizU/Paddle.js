@@ -14,7 +14,7 @@
   <el-row :gutter="20">
     <el-col :span="12">
       <el-row class="small-title">
-        <h2>上传文本图片</h2>
+        <h2>上传人脸图片</h2>
       </el-row>
       <el-row>
         <el-input type="file" v-model="fileName" @change="uploadImg"></el-input>

@@ -14,7 +14,7 @@
   <el-row :gutter="20">
     <el-col :span="12">
       <el-row class="small-title">
-        <h2>上传文本图片</h2>
+        <h2>上传图片</h2>
       </el-row>
       <el-row>
         <el-input type="file" v-model="fileName" @change="uploadImg"></el-input>
@@ -28,7 +28,7 @@
     </el-col>
     <el-col :span="12">
       <el-row class="small-title">
-        <h2>文字区域检测</h2>
+        <h2>螺丝螺母区域检测</h2>
       </el-row>
       <el-row>
         <el-button type="primary" @click="predict">开始检测</el-button>
