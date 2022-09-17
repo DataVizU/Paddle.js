@@ -41,6 +41,14 @@ export default defineConfig({
           __dirname,
           "cv/recognition/GestureRecognition/index.html"
         ),
+        humanseg: path.resolve(
+          __dirname,
+          "cv/segmentation/HumanSeg/index.html"
+        ),
+        humanseg_gpu: path.resolve(
+          __dirname,
+          "cv/segmentation/HumanSeg_gpu/index.html"
+        ),
       },
       output: {
         chunkFileNames: "static/js/[name]-[hash].js",

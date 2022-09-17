@@ -9,7 +9,7 @@
           <el-menu-item index="det" @click="routerJump('/det')">
             <span>图像检测</span>
           </el-menu-item>
-          <el-menu-item index="seg">
+          <el-menu-item index="seg" @click="routerJump('/seg')">
             <span>图像分割</span>
           </el-menu-item>
           <el-menu-item index="reg" @click="routerJump('/rec')">

@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import DetectionIntroduction from "@/pages/main/views/detection/DetectionIntroduction.vue";
 import OcrIntroduction from "@/pages/main/views/ocr/OcrIntroduction.vue";
 import RecognitionIntroduction from "@/pages/main/views/recognition/RecognitionIntroduction.vue";
+import SegmentationView from "@/pages/main/views/segmentation/SegmentationView.vue";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -20,6 +21,11 @@ const router = createRouter({
       path: "/rec",
       name: "rec",
       component: DetectionIntroduction,
+    },
+    {
+      path: "/seg",
+      name: "seg",
+      component: SegmentationView,
     },
     {
       path: "/ocr",
