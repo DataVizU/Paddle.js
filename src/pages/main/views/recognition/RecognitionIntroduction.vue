@@ -15,6 +15,19 @@
         </div>
       </el-card>
     </el-col>
+    <!--  itemrec  -->
+    <el-col :span="8">
+      <el-card
+        :body-style="{ padding: '0px' }"
+        @click="openWindow('cv/recognition/ItemIdentification/index.html')"
+      >
+        <img src="../../img/itemrec.jpeg" class="image" />
+        <div style="padding: 14px">
+          <h2>1000物品识别</h2>
+          <div>基于MobileNet_V2模型，可识别常见的1000物品。</div>
+        </div>
+      </el-card>
+    </el-col>
   </el-row>
 </template>
 

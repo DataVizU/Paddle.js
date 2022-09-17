@@ -49,6 +49,10 @@ export default defineConfig({
           __dirname,
           "cv/segmentation/HumanSeg_gpu/index.html"
         ),
+        itemrec: path.resolve(
+          __dirname,
+          "cv/recognition/ItemIdentification/index.html"
+        ),
       },
       output: {
         chunkFileNames: "static/js/[name]-[hash].js",

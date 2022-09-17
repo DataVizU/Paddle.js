@@ -17,6 +17,7 @@
     "@paddlejs-models/humanseg": "file:.yalc/@paddlejs-models/humanseg",
     "@paddlejs-models/humanseg-gpu": "file:.yalc/@paddlejs-models/humanseg-gpu",
     "@paddlejs-models/humanseg_gpu": "file:.yalc/@paddlejs-models/humanseg_gpu",
+    "@paddlejs-models/mobilenet": "file:.yalc/@paddlejs-models/mobilenet",
     "@paddlejs-models/ocr": "file:.yalc/@paddlejs-models/ocr",
     "@paddlejs-models/ocrdet": "file:.yalc/@paddlejs-models/ocrdet",
     "element-plus": "^2.2.16",

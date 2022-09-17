@@ -15,12 +15,12 @@ const router = createRouter({
     {
       path: "/det",
       name: "det",
-      component: RecognitionIntroduction,
+      component: DetectionIntroduction,
     },
     {
       path: "/rec",
       name: "rec",
-      component: DetectionIntroduction,
+      component: RecognitionIntroduction,
     },
     {
       path: "/seg",
