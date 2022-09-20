@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import * as ocr from "@paddlejs-models/ocr";
+import * as ocr from "@paddle-js-models/ocr";
 import { onMounted, onUnmounted, ref } from "vue";
 
 const fileName = ref(null);

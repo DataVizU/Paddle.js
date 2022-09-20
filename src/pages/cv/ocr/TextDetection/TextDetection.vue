@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import * as ocrDet from "@paddlejs-models/ocrdet";
+import * as ocrDet from "@paddle-js-models/ocrdet";
 import { onMounted, ref } from "vue";
 
 const fileName = ref(null);

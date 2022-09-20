@@ -86,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-import * as humanSeg from "@paddlejs-models/humanseg_gpu";
+import * as humanSeg from "@paddle-js-models/humanseg_gpu";
 import { onMounted, ref } from "vue";
 
 const fileName = ref(null);

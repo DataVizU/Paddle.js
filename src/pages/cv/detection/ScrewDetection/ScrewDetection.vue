@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import * as det from "@paddlejs-models/detect";
+import * as det from "@paddle-js-models/detect";
 import { onMounted, ref } from "vue";
 
 const fileName = ref(null);

@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import * as gestureRec from "@paddlejs-models/gesture";
+import * as gestureRec from "@paddle-js-models/gesture";
 import { onMounted, onUnmounted, ref } from "vue";
 
 const fileName = ref(null);

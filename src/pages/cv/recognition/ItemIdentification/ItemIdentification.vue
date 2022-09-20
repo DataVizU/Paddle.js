@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import * as mobilenet from "@paddlejs-models/mobilenet";
+import * as mobilenet from "@paddle-js-models/mobilenet";
 import { onMounted, ref } from "vue";
 import map from "./map.json";
 
