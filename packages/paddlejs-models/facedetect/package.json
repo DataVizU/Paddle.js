@@ -1,6 +1,6 @@
 {
-  "name": "@paddlejs-models/facedetect",
-  "version": "0.1.0",
+  "name": "@paddle-js-models/facedetect",
+  "version": "3.0.0",
   "description": "",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
