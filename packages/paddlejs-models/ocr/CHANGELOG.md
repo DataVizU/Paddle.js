@@ -1,6 +1,6 @@
 # 更新日志
 
-# [3.1.0](https://github.com/DataVizU/Paddle.js/compare/v2.1.0...v3.1.0) (2022-09-21)
+## [3.1.1](https://github.com/DataVizU/Paddle.js/compare/v2.1.0...v3.1.1) (2022-09-21)
 
 ### Bug Fixes
 
