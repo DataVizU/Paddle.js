@@ -201,8 +201,14 @@ export async function recognize(
         const ratio = 3;
         const width_num = Math.ceil(canvas_det.width / RECWIDTH / ratio);
         let text_list_tmp = '';
+        /*
+        @description
+        如果输入为长文本情况，即box的宽度 > ratio * RECWIDTH，按照 ratio * RECWIDTH的宽度裁剪，
+        并将每个裁剪部分的识别结果拼接起来。默认ratio=3，3是经验值，可根据实际情况调整。
+        如果输入为短文本情况，即box的宽度 < ratio * RECWIDTH，直接预测即可。
+        */
         if (width_num > 1){
-            // 根据原图的宽度进行裁剪拼接
+            // 根据ratio*RECWIDTH宽度进行裁剪拼接
             for (let i = 0; i < width_num; i++) {
                 resize_norm_img_splice(canvas_det, canvas_det.width, canvas_det.height, i, ratio);
                 const output = await recRunner.predict(canvas_rec);
