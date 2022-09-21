@@ -88,9 +88,9 @@ export async function init(detCustomModel = '', recCustomModel = '') {
 async function detect(image: HTMLImageElement, Config:DetPostConfig = defaultPostConfig) {
     // 目标尺寸
     const DETSHAPE = Config.shape ? Config.shape : DEFAULTDETSHAPE;
-    let thresh = Config.thresh;
-    let box_thresh = Config.box_thresh;
-    let unclip_ratio = Config.unclip_ratio;
+    const thresh = Config.thresh;
+    const box_thresh = Config.box_thresh;
+    const unclip_ratio = Config.unclip_ratio;
 
     const targetWidth = DETSHAPE;
     const targetHeight = DETSHAPE;
@@ -181,6 +181,7 @@ function drawBox(
  * 文本识别
  * @param {HTMLImageElement} image 原图
  * @param {Object} options 绘制文本框配置参数
+ * @param detConfig 识别相关可调参数
  */
 export async function recognize(
     image: HTMLImageElement,

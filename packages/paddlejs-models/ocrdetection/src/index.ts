@@ -46,9 +46,9 @@ export async function load(detPath) {
 export async function detect(image, Config:DetPostConfig = defaultPostConfig) {
     // 目标尺寸
     const DETSHAPE = Config.shape ? Config.shape : DEFAULTDETSHAPE;
-    let thresh = Config.thresh;
-    let box_thresh = Config.box_thresh;
-    let unclip_ratio = Config.unclip_ratio;
+    const thresh = Config.thresh;
+    const box_thresh = Config.box_thresh;
+    const unclip_ratio = Config.unclip_ratio;
     const targetWidth = DETSHAPE;
     const targetHeight = DETSHAPE;
     canvas.width = targetWidth;
