@@ -34,6 +34,7 @@
     "publish:@paddle-js-models/humanseg": "pnpm -F @paddle-js-models/humanseg publish",
     "publish:@paddle-js-models/humanseg_gpu": "pnpm -F @paddle-js-models/humanseg_gpu publish",
     "publish:@paddle-js-models/mobilenet": "pnpm -F @paddle-js-models/mobilenet publish",
+    "dev:paddle-js-demo": "pnpm -F paddle-js-demo dev",
     "lint": "eslint --ext .js,.ts packages --fix",
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "husky install"
