@@ -10,7 +10,7 @@ const DEFAULTDETSHAPE = 960;
 const canvas = document.createElement('canvas') as HTMLCanvasElement;
 let detectRunner = null as Runner;
 
-interface DetPostConfig {
+export interface DetPostConfig {
     shape: number;
     thresh: number;
     box_thresh: number;

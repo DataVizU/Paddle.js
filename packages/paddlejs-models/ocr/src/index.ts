@@ -22,7 +22,7 @@ export interface CanvasStyleOptions {
     fillStyle?: string;
 }
 
-interface DetPostConfig {
+export interface DetPostConfig {
     shape: number;
     thresh: number;
     box_thresh: number;
