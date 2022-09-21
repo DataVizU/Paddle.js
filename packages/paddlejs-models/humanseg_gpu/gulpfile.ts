@@ -21,7 +21,7 @@ interface TaskFunc {
     (cb: Function): void
 }
 
-const CHANGE_TRACE = ['paddlejs-models/humanseg_gpu']
+const CHANGE_TRACE = ['paddlejs-models/humanseg_gpu', 'paddle-js-models/humanseg_gpu', 'paddlejs-models', 'paddle-js-models', 'all']
 
 /**
  * 删除 lib 文件

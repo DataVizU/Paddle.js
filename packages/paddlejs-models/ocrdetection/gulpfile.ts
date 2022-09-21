@@ -21,7 +21,7 @@ interface TaskFunc {
     (cb: Function): void
 }
 
-const CHANGE_TRACE = ['paddlejs-models/ocrdet']
+const CHANGE_TRACE = ['paddlejs-models/ocrdet', 'paddle-js-models/ocrdet', 'paddlejs-models', 'paddle-js-models','all']
 
 /**
  * 删除 lib 文件
