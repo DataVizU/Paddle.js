@@ -22,9 +22,20 @@ function initCanvas(canvas) {
     document.body.appendChild(canvas);
 }
 
-export async function load() {
+const defaultModelPath = 'https://paddlejs.bj.bcebos.com/models/fuse/ocr/ch_PP-OCRv2_det_fuse_activation/model.json';
+
+interface ModelConfig {
+    shape: number;
+    thresh: number;
+    box_thresh: number;
+    unclip_ratio: number;
+}
+
+const defaultPostConfig: ModelConfig = {shape: 860, thresh: 0.3, box_thresh: 0.6, unclip_ratio:1.5};
+
+export async function load(detPath) {
     detectRunner = new Runner({
-        modelPath: 'https://paddlejs.bj.bcebos.com/models/fuse/ocr/ch_PP-OCRv2_det_fuse_activation/model.json',
+        modelPath: detPath ? detPath : defaultModelPath,
         fill: '#fff',
         mean: [0.485, 0.456, 0.406],
         std: [0.229, 0.224, 0.225],
@@ -33,7 +44,7 @@ export async function load() {
     await detectRunner.init();
 }
 
-export async function detect(image) {
+export async function detect(image, thresh: number, box_thresh:number, unclip_ratio:number) {
     // 目标尺寸
     const targetWidth = DETSHAPE;
     const targetHeight = DETSHAPE;
@@ -60,7 +71,7 @@ export async function detect(image) {
     ctx!.drawImage(image, x, y, sw, sh);
     const shapeList = [DETSHAPE, DETSHAPE];
     const outsDict = await detectRunner.predict(canvas);
-    const postResult = new DBProcess(outsDict, shapeList);
+    const postResult = new DBProcess(outsDict, shapeList, thresh, box_thresh, unclip_ratio);
     // 获取坐标
     const result = postResult.outputBox();
     // 转换原图坐标
