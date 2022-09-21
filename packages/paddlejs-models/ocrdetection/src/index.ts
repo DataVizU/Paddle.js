@@ -6,9 +6,17 @@ import { Runner } from '@paddlejs/paddlejs-core';
 import '@paddlejs/paddlejs-backend-webgl';
 import DBProcess from './dbPostprocess';
 
-const DETSHAPE = 960;
+const DEFAULTDETSHAPE = 960;
 const canvas = document.createElement('canvas') as HTMLCanvasElement;
 let detectRunner = null as Runner;
+
+export interface DetPostConfig {
+    shape: number;
+    thresh: number;
+    box_thresh: number;
+    unclip_ratio: number;
+}
+const defaultPostConfig: DetPostConfig = {shape: 960, thresh: 0.3, box_thresh: 0.6, unclip_ratio:1.5};
 
 // 通过canvas将上传原图大小转换为目标尺寸
 initCanvas(canvas);
@@ -22,9 +30,11 @@ function initCanvas(canvas) {
     document.body.appendChild(canvas);
 }
 
-export async function load() {
+const defaultModelPath = 'https://paddlejs.bj.bcebos.com/models/fuse/ocr/ch_PP-OCRv2_det_fuse_activation/model.json';
+
+export async function load(detPath) {
     detectRunner = new Runner({
-        modelPath: 'https://paddlejs.bj.bcebos.com/models/fuse/ocr/ch_PP-OCRv2_det_fuse_activation/model.json',
+        modelPath: detPath ? detPath : defaultModelPath,
         fill: '#fff',
         mean: [0.485, 0.456, 0.406],
         std: [0.229, 0.224, 0.225],
@@ -33,8 +43,12 @@ export async function load() {
     await detectRunner.init();
 }
 
-export async function detect(image) {
+export async function detect(image, Config:DetPostConfig = defaultPostConfig) {
     // 目标尺寸
+    const DETSHAPE = Config.shape ? Config.shape : DEFAULTDETSHAPE;
+    let thresh = Config.thresh;
+    let box_thresh = Config.box_thresh;
+    let unclip_ratio = Config.unclip_ratio;
     const targetWidth = DETSHAPE;
     const targetHeight = DETSHAPE;
     canvas.width = targetWidth;
@@ -60,7 +74,7 @@ export async function detect(image) {
     ctx!.drawImage(image, x, y, sw, sh);
     const shapeList = [DETSHAPE, DETSHAPE];
     const outsDict = await detectRunner.predict(canvas);
-    const postResult = new DBProcess(outsDict, shapeList);
+    const postResult = new DBProcess(outsDict, shapeList, thresh, box_thresh, unclip_ratio);
     // 获取坐标
     const result = postResult.outputBox();
     // 转换原图坐标

@@ -22,9 +22,17 @@ export interface CanvasStyleOptions {
     fillStyle?: string;
 }
 
-let DETSHAPE = 960;
+export interface DetPostConfig {
+    shape: number;
+    thresh: number;
+    box_thresh: number;
+    unclip_ratio: number;
+}
+const defaultPostConfig: DetPostConfig = {shape: 960, thresh: 0.3, box_thresh: 0.6, unclip_ratio:1.5};
+
+let DEFAULTDETSHAPE = 960;
 let RECWIDTH = 320;
-const RECHEIGHT = 32;
+let RECHEIGHT = 32;
 const canvas_det = document.createElement('canvas') as HTMLCanvasElement;
 const canvas_rec = document.createElement('canvas') as HTMLCanvasElement;
 let detectRunner = null as Runner;
@@ -68,15 +76,22 @@ export async function init(detCustomModel = '', recCustomModel = '') {
     await Promise.all([detectInit, recInit]);
 
     if (detectRunner.feedShape) {
-        DETSHAPE = detectRunner.feedShape.fw;
+        DEFAULTDETSHAPE = detectRunner.feedShape.fw;
     }
     if (recRunner.feedShape) {
         RECWIDTH = recRunner.feedShape.fw;
+        RECHEIGHT = recRunner.feedShape.fh;
     }
+
 }
 
-async function detect(image: HTMLImageElement) {
+async function detect(image: HTMLImageElement, Config:DetPostConfig = defaultPostConfig) {
     // 目标尺寸
+    const DETSHAPE = Config.shape ? Config.shape : DEFAULTDETSHAPE;
+    let thresh = Config.thresh;
+    let box_thresh = Config.box_thresh;
+    let unclip_ratio = Config.unclip_ratio;
+
     const targetWidth = DETSHAPE;
     const targetHeight = DETSHAPE;
     canvas_det.width = targetWidth;
@@ -103,7 +118,7 @@ async function detect(image: HTMLImageElement) {
     ctx!.drawImage(image, x, y, sw, sh);
     const shapeList = [DETSHAPE, DETSHAPE];
     const outsDict = await detectRunner.predict(canvas_det);
-    const postResult = new DBProcess(outsDict, shapeList);
+    const postResult = new DBProcess(outsDict, shapeList, thresh, box_thresh, unclip_ratio);
     // 获取坐标
     const result = postResult.outputBox();
     // 转换原图坐标
@@ -169,10 +184,11 @@ function drawBox(
  */
 export async function recognize(
     image: HTMLImageElement,
-    options?: DrawBoxOptions
+    options?: DrawBoxOptions,
+    detConfig:DetPostConfig = defaultPostConfig
 ) {
     // 文本框选坐标点
-    const point = await detect(image);
+    const point = await detect(image, detConfig);
     // 绘制文本框
     if (options?.canvas) {
         drawBox(point, image, options.canvas, options.style);
@@ -182,16 +198,31 @@ export async function recognize(
     for (let i = 0; i < boxes.length; i++) {
         const tmp_box = JSON.parse(JSON.stringify(boxes[i]));
         get_rotate_crop_image(image, tmp_box);
-        const width_num = Math.ceil(canvas_det.width / RECWIDTH);
+        // 默认ratio=3，3是经验值，可根据实际情况调整。
+        const ratio = 3;
+        const width_num = Math.ceil(canvas_det.width / RECWIDTH / ratio);
         let text_list_tmp = '';
-        // 根据原图的宽度进行裁剪拼接
-        for (let i = 0; i < width_num; i++) {
-            resize_norm_img_splice(canvas_det, canvas_det.width, canvas_det.height, i);
-            const output = await recRunner.predict(canvas_rec);
+        /**
+         * 如果输入为长文本情况，即box的宽度 > ratio * RECWIDTH，按照 ratio * RECWIDTH的宽度裁剪，并将每个裁剪部分的识别结果拼接起来。
+         * 如果输入为短文本情况，即box的宽度 < ratio * RECWIDTH，直接预测即可。
+         */
+        if (width_num > 1){
+            // 根据ratio*RECWIDTH宽度进行裁剪拼接
+            for (let i = 0; i < width_num; i++) {
+                resize_norm_img_splice(canvas_det, canvas_det.width, canvas_det.height, i, ratio);
+                const output = await recRunner.predict(canvas_rec);
+                const recResult = new RecProcess(output);
+                const text = recResult.outputResult();
+                text_list_tmp = text_list_tmp.concat(text.text);
+            }
+        } else {
+            // 不裁剪，直接预测
+            const output = await recRunner.predict(canvas_det);
             const recResult = new RecProcess(output);
             const text = recResult.outputResult();
             text_list_tmp = text_list_tmp.concat(text.text);
         }
+
         text_list.push(text_list_tmp);
     }
     return { text: text_list, points: point };
@@ -282,12 +313,13 @@ function resize_norm_img_splice(
     image: HTMLImageElement | HTMLCanvasElement,
     origin_width: number,
     origin_height: number,
-    index = 0
+    index = 0,
+    ratio = 3,
 ) {
     canvas_rec.width = RECWIDTH;
     canvas_rec.height = RECHEIGHT;
     const ctx = canvas_rec.getContext('2d');
     ctx!.fillStyle = '#fff';
     ctx!.clearRect(0, 0, canvas_rec.width, canvas_rec.height);
-    ctx!.drawImage(image, -index * RECWIDTH, 0, origin_width, origin_height);
+    ctx!.drawImage(image, -index * RECWIDTH * ratio, 0, origin_width, origin_height);
 }

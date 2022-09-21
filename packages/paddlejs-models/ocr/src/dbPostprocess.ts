@@ -17,12 +17,12 @@ export default class DBPostprocess {
     private readonly width: number;
     private readonly height: number;
 
-    constructor(result: number[], shape: number[]) {
+    constructor(result: number[], shape: number[], thresh:number = 0.3, box_thresh:number = 0.6, unclip_ratio:number = 1.5) {
         enableBoundaryChecking(false);
-        this.thresh = 0.3;
-        this.box_thresh = 0.5;
+        this.thresh = thresh ? thresh : 0.3;
+        this.box_thresh = box_thresh ? box_thresh : 0.6;
         this.max_candidates = 1000;
-        this.unclip_ratio = 1.6;
+        this.unclip_ratio = unclip_ratio ? unclip_ratio:1.5;
         this.min_size = 3;
         this.width = shape[0];
         this.height = shape[1];
