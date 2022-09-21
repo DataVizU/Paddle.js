@@ -6,7 +6,7 @@ import { Runner } from '@paddlejs/paddlejs-core';
 import '@paddlejs/paddlejs-backend-webgl';
 import DBProcess from './dbPostprocess';
 
-const DETSHAPE = 960;
+const DEFAULTDETSHAPE = 960;
 const canvas = document.createElement('canvas') as HTMLCanvasElement;
 let detectRunner = null as Runner;
 
@@ -24,15 +24,6 @@ function initCanvas(canvas) {
 
 const defaultModelPath = 'https://paddlejs.bj.bcebos.com/models/fuse/ocr/ch_PP-OCRv2_det_fuse_activation/model.json';
 
-interface ModelConfig {
-    shape: number;
-    thresh: number;
-    box_thresh: number;
-    unclip_ratio: number;
-}
-
-const defaultPostConfig: ModelConfig = {shape: 860, thresh: 0.3, box_thresh: 0.6, unclip_ratio:1.5};
-
 export async function load(detPath) {
     detectRunner = new Runner({
         modelPath: detPath ? detPath : defaultModelPath,
@@ -44,8 +35,9 @@ export async function load(detPath) {
     await detectRunner.init();
 }
 
-export async function detect(image, thresh: number, box_thresh:number, unclip_ratio:number) {
+export async function detect(image, shape: number, thresh: number, box_thresh:number, unclip_ratio:number) {
     // 目标尺寸
+    const DETSHAPE = shape ? shape : DEFAULTDETSHAPE;
     const targetWidth = DETSHAPE;
     const targetHeight = DETSHAPE;
     canvas.width = targetWidth;
