@@ -10,6 +10,14 @@ const DEFAULTDETSHAPE = 960;
 const canvas = document.createElement('canvas') as HTMLCanvasElement;
 let detectRunner = null as Runner;
 
+interface DetPostConfig {
+    shape: number;
+    thresh: number;
+    box_thresh: number;
+    unclip_ratio: number;
+}
+const defaultPostConfig: DetPostConfig = {shape: 960, thresh: 0.3, box_thresh: 0.6, unclip_ratio:1.5};
+
 // 通过canvas将上传原图大小转换为目标尺寸
 initCanvas(canvas);
 
@@ -35,9 +43,12 @@ export async function load(detPath) {
     await detectRunner.init();
 }
 
-export async function detect(image, shape: number, thresh: number, box_thresh:number, unclip_ratio:number) {
+export async function detect(image, Config:DetPostConfig = defaultPostConfig) {
     // 目标尺寸
-    const DETSHAPE = shape ? shape : DEFAULTDETSHAPE;
+    const DETSHAPE = Config.shape ? Config.shape : DEFAULTDETSHAPE;
+    let thresh = Config.thresh;
+    let box_thresh = Config.box_thresh;
+    let unclip_ratio = Config.unclip_ratio;
     const targetWidth = DETSHAPE;
     const targetHeight = DETSHAPE;
     canvas.width = targetWidth;
