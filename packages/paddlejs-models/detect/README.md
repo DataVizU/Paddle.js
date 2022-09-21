@@ -4,12 +4,12 @@
 
 detect model is used to detect the position of label frame in the image.
 
-<img src="https://img.shields.io/npm/v/@paddlejs-models/detect?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs-models/detect" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs-models/detect?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs-models/detect" alt="downloads">
+<img src="https://img.shields.io/npm/v/@paddle-js-models/detect?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddle-js-models/detect" alt="size"> <img src="https://img.shields.io/npm/dm/@paddle-js-models/detect?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddle-js-models/detect" alt="downloads">
 
 # Usage
 
 ```js
-import * as det from '@paddlejs-models/detect';
+import * as det from '@paddle-js-models/detect';
 
 // Load model
 await det.load();

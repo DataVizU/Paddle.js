@@ -1,6 +1,6 @@
 {
   "name": "@paddle-js-models/gesture",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",

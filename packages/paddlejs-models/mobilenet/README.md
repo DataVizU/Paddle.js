@@ -4,12 +4,12 @@
 
 mobilenet model can classify img. It provides simple interfaces to use. You can use your own category model to classify img.
 
-<img src="https://img.shields.io/npm/v/@paddlejs-models/mobilenet?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs-models/mobilenet" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs-models/mobilenet?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs-models/mobilenet" alt="downloads">
+<img src="https://img.shields.io/npm/v/@paddle-js-models/mobilenet?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddle-js-models/mobilenet" alt="size"> <img src="https://img.shields.io/npm/dm/@paddle-js-models/mobilenet?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddle-js-models/mobilenet" alt="downloads">
 
 # Usage
 
 ```js
-import * as mobilenet from '@paddlejs-models/mobilenet';
+import * as mobilenet from '@paddle-js-models/mobilenet';
 // You need to specify your model path and the binary file count
 // If your has mean and std params, you need to specify them.
 // map is the results your model can classify.

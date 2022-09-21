@@ -5,24 +5,14 @@
 实时的人像分割模型。使用者可以用于背景替换。需要使用接口 getGrayValue 获取灰度值。
 然后使用接口 drawHumanSeg 绘制分割出来的人像，实现背景替换；使用接口 blurBackground 实现背景虚化；也可以使用 drawMask 接口绘制背景，可以配置参数来获取全黑背景或者原图背景。
 
-<img src="https://img.shields.io/npm/v/@paddlejs-models/humanseg?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs-models/humanseg" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs-models/humanseg?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs-models/humanseg" alt="downloads">
-
-# 运行 Demo
-1. 在当前目录下执行
-``` bash
-npm install
-npm run dev
-```
-2. 访问 http://0.0.0.0:8866
-3. 访问 gpu 全流程处理效果 http://0.0.0.0:8866/gpu.html
-
+<img src="https://img.shields.io/npm/v/@paddle-js-models/humanseg?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddle-js-models/humanseg" alt="size"> <img src="https://img.shields.io/npm/dm/@paddle-js-models/humanseg?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddle-js-models/humanseg" alt="downloads">
 
 # 使用
 
 ```js
 
 // 引入 humanseg sdk
-import * as humanseg from '@paddlejs-models/humanseg';
+import * as humanseg from '@paddle-js-models/humanseg';
 
 // 默认下载 398x224 shape 的模型，默认执行预热
 await humanseg.load();
@@ -56,7 +46,7 @@ humanseg.drawMask(data, canvas3, back_canvas);
 ```js
 
 // 引入 humanseg sdk
-import * as humanseg from '@paddlejs-models/humanseg/lib/index_gpu';
+import * as humanseg from '@paddle-js-models/humanseg/lib/index_gpu';
 
 // 默认下载 398x224 shape 的模型，默认执行预热
 await humanseg.load();

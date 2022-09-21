@@ -4,12 +4,12 @@
 
 ocr_detect model is used to detect the text area in the image.
 
-<img src="https://img.shields.io/npm/v/@paddlejs-models/ocrdet?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs-models/ocrdet" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs-models/ocrdet?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs-models/ocrdet" alt="downloads">
+<img src="https://img.shields.io/npm/v/@paddle-js-models/ocrdet?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddle-js-models/ocrdet" alt="size"> <img src="https://img.shields.io/npm/dm/@paddle-js-models/ocrdet?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddle-js-models/ocrdet" alt="downloads">
 
 # Usage
 
 ```js
-import * as ocr from '@paddlejs-models/ocrdet';
+import * as ocr from '@paddle-js-models/ocrdet';
 // Load ocr_detect model
 await ocr.load();
 // Get text area points
