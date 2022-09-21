@@ -26,32 +26,32 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        entry: path.resolve(__dirname, "main/index.html"),
-        ocrdet: path.resolve(__dirname, "cv/ocr/TextDetection/index.html"),
-        ocr: path.resolve(__dirname, "cv/ocr/TextRecognition/index.html"),
+        entry: path.resolve(__dirname, "src/pages/main/index.html"),
+        ocrdet: path.resolve(__dirname, "src/pages/cv/ocr/TextDetection/index.html"),
+        ocr: path.resolve(__dirname, "src/pages/cv/ocr/TextRecognition/index.html"),
         screwdet: path.resolve(
           __dirname,
-          "cv/detection/ScrewDetection/index.html"
+          "src/pages/cv/detection/ScrewDetection/index.html"
         ),
         facedet: path.resolve(
           __dirname,
-          "cv/detection/FaceDetection/index.html"
+          "src/pages/cv/detection/FaceDetection/index.html"
         ),
         gesturerec: path.resolve(
           __dirname,
-          "cv/recognition/GestureRecognition/index.html"
+          "src/pages/cv/recognition/GestureRecognition/index.html"
         ),
         humanseg: path.resolve(
           __dirname,
-          "cv/segmentation/HumanSeg/index.html"
+          "src/pages/cv/segmentation/HumanSeg/index.html"
         ),
         humanseg_gpu: path.resolve(
           __dirname,
-          "cv/segmentation/HumanSeg_gpu/index.html"
+          "src/pages/cv/segmentation/HumanSeg_gpu/index.html"
         ),
         itemrec: path.resolve(
           __dirname,
-          "cv/recognition/ItemIdentification/index.html"
+          "src/pages/cv/recognition/ItemIdentification/index.html"
         ),
       },
       output: {
