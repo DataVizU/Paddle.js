@@ -4,7 +4,7 @@
 
 Ocr is a text recognition module, which includes two models: ocr_detection and ocr_recognition。 Ocr_detection model detects the region of the text in the picture, ocr_recognition model can recognize the characters (Chinese / English / numbers) in each text area.
 
-<img src="https://img.shields.io/npm/v/@paddlejs-models/ocr?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs-models/ocr" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs-models/ocr?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs-models/ocr" alt="downloads">
+<img src="https://img.shields.io/npm/v/@paddle-js-models/ocr?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddle-js-models/ocr" alt="size"> <img src="https://img.shields.io/npm/dm/@paddle-js-models/ocr?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddle-js-models/ocr" alt="downloads">
 
 The module provides a simple and easy-to-use interface. Users only need to upload pictures to obtain text recognition results.
 
@@ -17,7 +17,7 @@ The input shape of the ocr_recognition model is [1, 3, 32, 320], and the selecte
 # Usage
 
 ```js
-import * as ocr from '@paddlejs-models/ocr';
+import * as ocr from '@paddle-js-models/ocr';
 // Model initialization
 await ocr.init();
 // Get the text recognition result API, img is the user's upload picture, and option is an optional parameter

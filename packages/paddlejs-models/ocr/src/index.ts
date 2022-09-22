@@ -88,9 +88,9 @@ export async function init(detCustomModel = '', recCustomModel = '') {
 async function detect(image: HTMLImageElement, Config:DetPostConfig = defaultPostConfig) {
     // 目标尺寸
     const DETSHAPE = Config.shape ? Config.shape : DEFAULTDETSHAPE;
-    let thresh = Config.thresh;
-    let box_thresh = Config.box_thresh;
-    let unclip_ratio = Config.unclip_ratio;
+    const thresh = Config.thresh;
+    const box_thresh = Config.box_thresh;
+    const unclip_ratio = Config.unclip_ratio;
 
     const targetWidth = DETSHAPE;
     const targetHeight = DETSHAPE;
@@ -181,6 +181,7 @@ function drawBox(
  * 文本识别
  * @param {HTMLImageElement} image 原图
  * @param {Object} options 绘制文本框配置参数
+ * @param detConfig 识别相关可调参数
  */
 export async function recognize(
     image: HTMLImageElement,
@@ -198,15 +199,14 @@ export async function recognize(
     for (let i = 0; i < boxes.length; i++) {
         const tmp_box = JSON.parse(JSON.stringify(boxes[i]));
         get_rotate_crop_image(image, tmp_box);
+        // 默认ratio=3，3是经验值，可根据实际情况调整。
         const ratio = 3;
         const width_num = Math.ceil(canvas_det.width / RECWIDTH / ratio);
         let text_list_tmp = '';
-        /*
-        @description
-        如果输入为长文本情况，即box的宽度 > ratio * RECWIDTH，按照 ratio * RECWIDTH的宽度裁剪，
-        并将每个裁剪部分的识别结果拼接起来。默认ratio=3，3是经验值，可根据实际情况调整。
-        如果输入为短文本情况，即box的宽度 < ratio * RECWIDTH，直接预测即可。
-        */
+        /**
+         * 如果输入为长文本情况，即box的宽度 > ratio * RECWIDTH，按照 ratio * RECWIDTH的宽度裁剪，并将每个裁剪部分的识别结果拼接起来。
+         * 如果输入为短文本情况，即box的宽度 < ratio * RECWIDTH，直接预测即可。
+         */
         if (width_num > 1){
             // 根据ratio*RECWIDTH宽度进行裁剪拼接
             for (let i = 0; i < width_num; i++) {

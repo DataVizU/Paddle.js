@@ -5,3 +5,6 @@ rollup.config.*
 lib
 etc
 coverage
+
+demo
+paddlejs-core

@@ -9,13 +9,13 @@ Api blurBackground can draw human segmentation with a blurred origin background.
 Api drawMask can draw the background without human.
 
 
-<img src="https://img.shields.io/npm/v/@paddlejs-models/humanseg?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddlejs-models/humanseg" alt="size"> <img src="https://img.shields.io/npm/dm/@paddlejs-models/humanseg?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddlejs-models/humanseg" alt="downloads">
+<img src="https://img.shields.io/npm/v/@paddle-js-models/humanseg?color=success" alt="version"> <img src="https://img.shields.io/bundlephobia/min/@paddle-js-models/humanseg" alt="size"> <img src="https://img.shields.io/npm/dm/@paddle-js-models/humanseg?color=orange" alt="downloads"> <img src="https://img.shields.io/npm/dt/@paddle-js-models/humanseg" alt="downloads">
 
 # Usage
 
 ```js
 
-import * as humanseg from '@paddlejs-models/humanseg';
+import * as humanseg from '@paddle-js-models/humanseg';
 
 // load humanseg model, use 398x224 shape model, and preheat
 await humanseg.load();
@@ -48,7 +48,7 @@ humanseg.drawMask(data, canvas3, back_canvas);
 ```js
 
 // 引入 humanseg sdk
-import * as humanseg from '@paddlejs-models/humanseg/lib/index_gpu';
+import * as humanseg from '@paddle-js-models/humanseg/lib/index_gpu';
 
 // load humanseg model, use 398x224 shape model, and preheat
 await humanseg.load();
