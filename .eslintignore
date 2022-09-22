@@ -8,3 +8,5 @@ coverage
 
 demo
 paddlejs-core
+paddlejs-backend-webgpu
+paddlejs-mediapipe
