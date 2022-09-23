@@ -27,6 +27,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         entry: path.resolve(__dirname, "src/pages/main/index.html"),
+        vis: path.resolve(__dirname, "src/pages/vis/index.html"),
         ocrdet: path.resolve(__dirname, "src/pages/cv/ocr/TextDetection/index.html"),
         ocr: path.resolve(__dirname, "src/pages/cv/ocr/TextRecognition/index.html"),
         screwdet: path.resolve(
