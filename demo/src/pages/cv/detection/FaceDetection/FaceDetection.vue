@@ -41,8 +41,16 @@
 </template>
 
 <script setup lang="ts">
-import { FaceDetector, TransformData } from "@paddle-js-models/facedetect";
+import { FaceDetector } from "@paddle-js-models/facedetect";
 import { onMounted, ref } from "vue";
+
+interface TransformData {
+  left: number;
+  width: number;
+  top: number;
+  height: number;
+  confidence: number;
+}
 
 const faceDet = new FaceDetector();
 

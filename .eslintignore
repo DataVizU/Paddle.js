@@ -7,4 +7,8 @@ etc
 coverage
 
 demo
+examples
+converter
 paddlejs-core
+paddlejs-backend-webgpu
+paddlejs-mediapipe
