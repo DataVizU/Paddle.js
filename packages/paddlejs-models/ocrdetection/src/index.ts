@@ -6,7 +6,7 @@ import { Runner } from '@paddlejs/paddlejs-core';
 import '@paddlejs/paddlejs-backend-webgl';
 import DBProcess from './dbPostprocess';
 
-const DEFAULTDETSHAPE = 960;
+const DEFAULTDETSHAPE = 640;
 const canvas = document.createElement('canvas') as HTMLCanvasElement;
 let detectRunner = null as Runner;
 
@@ -30,7 +30,7 @@ function initCanvas(canvas) {
     document.body.appendChild(canvas);
 }
 
-const defaultModelPath = 'https://paddlejs.bj.bcebos.com/models/fuse/ocr/ch_PP-OCRv2_det_fuse_activation/model.json';
+const defaultModelPath = 'https://paddleocr.bj.bcebos.com/PaddleJS/PP-OCRv3/ch/ch_PP-OCRv3_det_infer_js_640/model.json';
 
 export async function load(detPath) {
     detectRunner = new Runner({
