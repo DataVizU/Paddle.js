@@ -432,14 +432,14 @@ Page({
       const me = this;
       // 初始化Runner
       detectRunner = new paddlejs.Runner({
-          modelPath: 'https://paddlejs.bj.bcebos.com/models/fuse/ocr/ch_PP-OCRv2_det_fuse_activation',
+          modelPath: 'https://paddleocr.bj.bcebos.com/PaddleJS/PP-OCRv3/ch/ch_PP-OCRv3_det_infer_js_640/model.json',
           mean: [0.485, 0.456, 0.406],
           std: [0.229, 0.224, 0.225],
           bgr: true,
           webglFeedProcess: true
       });
       recRunner = new paddlejs.Runner({
-          modelPath: 'https://paddlejs.bj.bcebos.com/models/fuse/ocr/ch_PP-OCRv2_rec_fuse_activation/model.json',
+          modelPath: 'https://paddleocr.bj.bcebos.com/PaddleJS/PP-OCRv3/ch/ch_PP-OCRv3_rec_infer_js/model.json',
           fill: '#000',
           mean: [0.5, 0.5, 0.5],
           std: [0.5, 0.5, 0.5],
