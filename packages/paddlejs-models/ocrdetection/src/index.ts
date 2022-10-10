@@ -30,7 +30,7 @@ function initCanvas(canvas) {
     document.body.appendChild(canvas);
 }
 
-const defaultModelPath = 'https://paddleocr.bj.bcebos.com/PaddleJS/PP-OCRv3/ch/ch_PP-OCRv3_det_infer_js_640/model.json';
+const defaultModelPath = 'https://js-models.bj.bcebos.com/PaddleOCR/PP-OCRv3/ch_PP-OCRv3_det_infer_js_640/model.json';
 
 export async function load(detPath) {
     detectRunner = new Runner({
