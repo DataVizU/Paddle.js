@@ -1,8 +1,10 @@
 # 更新日志
 
-## [3.1.1](https://github.com/DataVizU/Paddle.js/compare/v2.1.0...v3.1.1) (2022-09-21)
+## [3.1.1](https://github.com/DataVizU/Paddle.js/compare/v2.1.0...v3.1.1) (2022-10-12)
 
 ### Bug Fixes
+
+* **all:** change jest package version ([df13ecb](https://github.com/DataVizU/Paddle.js/commit/df13ecb458b2c5c4e876d7585e0ed476f0ceb0f4))
 
 * **paddlejs-mediapipe:** fix camera create canvas dom automatically ([1387759](https://github.com/DataVizU/Paddle.js/commit/1387759fe9c5b641d9aa95cbd94088f6c045f33a))
 
