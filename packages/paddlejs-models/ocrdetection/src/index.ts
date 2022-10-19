@@ -29,8 +29,9 @@ function initCanvas(canvas) {
     canvas.style.opacity = '0';
     document.body.appendChild(canvas);
 }
-const defaultDetConfig = {fill: '#fff', mean: [0.485, 0.456, 0.406],std: [0.229, 0.224, 0.225]};
-const defaultModelPath = 'https://js-models.bj.bcebos.com/PaddleOCR/PP-OCRv3/ch_PP-OCRv3_det_infer_js_960/model.json';
+
+export const defaultDetConfig = {fill: '#fff', mean: [0.485, 0.456, 0.406],std: [0.229, 0.224, 0.225]};
+export const defaultModelPath = 'https://js-models.bj.bcebos.com/PaddleOCR/PP-OCRv3/ch_PP-OCRv3_det_infer_js_960/model.json';
 
 export async function load(config) {
     const detPath = config.modelPath ;

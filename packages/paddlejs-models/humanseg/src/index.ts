@@ -18,7 +18,7 @@ const blurFilter = new WebGLImageFilter();
 blurFilter.reset();
 blurFilter.addFilter('blur', 10);
 
-const defaultConfig = {modelPath: 'https://paddlejs.bj.bcebos.com/models/fuse/humanseg/humanseg_398x224_fuse_activation/model.json', mean: [0.5, 0.5, 0.5], std: [0.5, 0.5, 0.5], enableLightModel: false};
+export const defaultConfig = {modelPath: 'https://paddlejs.bj.bcebos.com/models/fuse/humanseg/humanseg_398x224_fuse_activation/model.json', mean: [0.5, 0.5, 0.5], std: [0.5, 0.5, 0.5], enableLightModel: false};
 
 export async function load(Config) {
     const modelpath = 'https://paddlejs.bj.bcebos.com/models/fuse/humanseg/humanseg_398x224_fuse_activation/model.json';
