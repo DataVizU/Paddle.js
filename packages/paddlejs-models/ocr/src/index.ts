@@ -30,6 +30,10 @@ export interface DetPostConfig {
 }
 const defaultPostConfig: DetPostConfig = {shape: 960, thresh: 0.3, box_thresh: 0.6, unclip_ratio:1.5};
 
+const defaultDetConfig = {fill: '#fff', mean: [0.485, 0.456, 0.406], std: [0.229, 0.224, 0.225]};
+const defaultRecConfig = {fill: '#000', mean: [0.5, 0.5, 0.5], std: [0.5, 0.5, 0.5]};
+
+
 let DEFAULTDETSHAPE = 960;
 let RECWIDTH = 320;
 let RECHEIGHT = 48;
@@ -49,25 +53,26 @@ function initCanvas(canvas: HTMLCanvasElement) {
     document.body.appendChild(canvas);
 }
 
-export async function init(detCustomModel = '', recCustomModel = '') {
+export async function init(detConfig, recConfig) {
     const detModelPath = 'https://js-models.bj.bcebos.com/PaddleOCR/PP-OCRv3/ch_PP-OCRv3_det_infer_js_960/model.json';
     const recModelPath = 'https://js-models.bj.bcebos.com/PaddleOCR/PP-OCRv3/ch_PP-OCRv3_rec_infer_js/model.json';
     env.set('webgl_pack_output', true);
+
     detectRunner = new Runner({
-        modelPath: detCustomModel ? detCustomModel : detModelPath,
-        fill: '#fff',
-        mean: [0.485, 0.456, 0.406],
-        std: [0.229, 0.224, 0.225],
+        modelPath: detConfig.modelPath ? detConfig.modelPath : detModelPath,
+        fill: detConfig.fill ? detConfig.fill : defaultDetConfig.fill,
+        mean: detConfig.mean ? detConfig.mean : defaultDetConfig.mean,
+        std: detConfig.std ? detConfig.std: defaultDetConfig.std,
         bgr: true,
         webglFeedProcess: true
     });
     const detectInit = detectRunner.init();
 
     recRunner = new Runner({
-        modelPath: recCustomModel ? recCustomModel : recModelPath,
-        fill: '#000',
-        mean: [0.5, 0.5, 0.5],
-        std: [0.5, 0.5, 0.5],
+        modelPath: recConfig.modelPath ? recConfig.modelPath : recModelPath,
+        fill: recConfig.fill ? recConfig.fill : defaultRecConfig.fill,
+        mean: recConfig.mean ? recConfig.mean : defaultRecConfig.mean,
+        std: recConfig.std ? recConfig.std : defaultRecConfig.std,
         bgr: true,
         webglFeedProcess: true
     });
