@@ -6,7 +6,7 @@ import { Runner } from '@paddlejs/paddlejs-core';
 import '@paddlejs/paddlejs-backend-webgl';
 import DBProcess from './dbPostprocess';
 
-const DEFAULTDETSHAPE = 640;
+const DEFAULTDETSHAPE = 960;
 const canvas = document.createElement('canvas') as HTMLCanvasElement;
 let detectRunner = null as Runner;
 
@@ -30,14 +30,18 @@ function initCanvas(canvas) {
     document.body.appendChild(canvas);
 }
 
-const defaultModelPath = 'https://js-models.bj.bcebos.com/PaddleOCR/PP-OCRv3/ch_PP-OCRv3_det_infer_js_640/model.json';
+export const defaultDetConfig = {fill: '#fff', mean: [0.485, 0.456, 0.406],std: [0.229, 0.224, 0.225]};
+export const defaultModelPath = 'https://js-models.bj.bcebos.com/PaddleOCR/PP-OCRv3/ch_PP-OCRv3_det_infer_js_960/model.json';
 
-export async function load(detPath) {
+export async function load(config) {
+    const detPath = config.modelPath ;
+    const mean = config.mean ? config.mean : defaultDetConfig.mean;
+    const std = config.std ? config.std : defaultDetConfig.std;
     detectRunner = new Runner({
         modelPath: detPath ? detPath : defaultModelPath,
         fill: '#fff',
-        mean: [0.485, 0.456, 0.406],
-        std: [0.229, 0.224, 0.225],
+        mean: mean,
+        std: std,
         bgr: true
     });
     await detectRunner.init();

@@ -18,23 +18,25 @@ const blurFilter = new WebGLImageFilter();
 blurFilter.reset();
 blurFilter.addFilter('blur', 10);
 
+export const defaultConfig = {modelPath: 'https://paddlejs.bj.bcebos.com/models/fuse/humanseg/humanseg_398x224_fuse_activation/model.json', mean: [0.5, 0.5, 0.5], std: [0.5, 0.5, 0.5], enableLightModel: false};
 
-export async function load(needPreheat = true, enableLightModel = false, customModel = null) {
+export async function load(Config) {
     const modelpath = 'https://paddlejs.bj.bcebos.com/models/fuse/humanseg/humanseg_398x224_fuse_activation/model.json';
     const lightModelPath = 'https://paddlejs.bj.bcebos.com/models/fuse/humanseg/humanseg_288x160_fuse_activation/model.json';
-    const path = customModel
-        ? customModel
-        : enableLightModel ? lightModelPath : modelpath;
-    if (enableLightModel) {
+    const path = Config.modelPath
+        ? Config.modelPath
+        : Config.enableLightModel ? lightModelPath : modelpath;
+
+    if (Config.enableLightModel) {
         WIDTH = 288;
         HEIGHT = 160;
     }
 
     runner = new Runner({
         modelPath: path,
-        needPreheat: needPreheat !== undefined ? needPreheat : true,
-        mean: [0.5, 0.5, 0.5],
-        std: [0.5, 0.5, 0.5],
+        needPreheat: true,
+        mean: Config.mean ? Config.mean : defaultConfig.mean,
+        std: Config.std ? Config.std : defaultConfig.std,
         webglFeedProcess: true
     });
 
